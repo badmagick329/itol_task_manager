@@ -1,9 +1,11 @@
-import pytest
-import sys
 from pathlib import Path
 
+import sys
+
+import pytest
+
 BASE_DIR = Path(__file__).parent.parent / "src"
-if (str(BASE_DIR) not in sys.path):
+if str(BASE_DIR) not in sys.path:
     sys.path.append(str(BASE_DIR))
 
 
@@ -11,11 +13,13 @@ if (str(BASE_DIR) not in sys.path):
 def app():
     """Create and configure a new app instance for each test session."""
     from main import app as flask_app
-    
-    flask_app.config.update({
-        "TESTING": True,
-    })
-    
+
+    flask_app.config.update(
+        {
+            "TESTING": True,
+        }
+    )
+
     return flask_app
 
 

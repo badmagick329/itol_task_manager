@@ -1,4 +1,5 @@
 import pytest
+
 from src.main import app
 
 
@@ -43,7 +44,7 @@ class TestFlaskApp:
     def test_client_uses_testing_config(self, client, app):
         """Test that the client uses the testing configuration."""
         assert app.config["TESTING"] is True
-        
+
         response = client.get("/")
         assert response.status_code == 200
 
@@ -51,9 +52,4 @@ class TestFlaskApp:
 @pytest.fixture
 def sample_data():
     """Fixture providing sample data for tests."""
-    return {
-        "name": "test",
-        "value": 42,
-        "items": [1, 2, 3, 4, 5]
-    }
-
+    return {"name": "test", "value": 42, "items": [1, 2, 3, 4, 5]}
