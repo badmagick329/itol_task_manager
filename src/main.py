@@ -1,18 +1,28 @@
-from flask import Flask, request, redirect, url_for, abort, render_template_string
-
-from flask_login import (
-    LoginManager, UserMixin,
-    login_user, login_required,
-    logout_user, current_user
+from flask import (
+    Flask,
+    abort,
+    redirect,
+    render_template_string,
+    request,
+    url_for,
 )
 from flask_bcrypt import Bcrypt
+from flask_login import (
+    LoginManager,
+    UserMixin,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
 
 app = Flask(__name__)
 app.secret_key = "replace-this-with-a-real-secret"
 bcrypt = Bcrypt(app)
 
 login_manager = LoginManager(app)
-login_manager.login_view = "login" # type:ignore
+login_manager.login_view = "login"  # type:ignore
+
 
 class User(UserMixin):
     def __init__(self, id, username, pw_hash):
@@ -23,17 +33,20 @@ class User(UserMixin):
     def check_password(self, password):
         return bcrypt.check_password_hash(self.pw_hash, password)
 
+
 # NOTE: hardcoded value for now
 _admin_hash = bcrypt.generate_password_hash("test123").decode()
 _admin = User(id=1, username="admin", pw_hash=_admin_hash)
+
 
 @login_manager.user_loader
 def load_user(user_id):
     return _admin if str(_admin.id) == str(user_id) else None
 
+
 @app.route("/")
 def hello_world():
-    return render_template_string('''
+    return render_template_string("""
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -45,7 +58,8 @@ def hello_world():
         <p>Hello, World!</p>
     </body>
     </html>
-    ''')
+    """)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -58,7 +72,7 @@ def login():
             return redirect(url_for("protected"))
         else:
             abort(401)
-    return render_template_string('''
+    return render_template_string("""
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -74,12 +88,13 @@ def login():
         </form>
     </body>
     </html>
-    ''')
+    """)
+
 
 @app.route("/protected")
 @login_required
 def protected():
-    return render_template_string(f'''
+    return render_template_string(f"""
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -92,13 +107,14 @@ def protected():
         <a href="/logout">Logout</a>
     </body>
     </html>
-    ''')
+    """)
+
 
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return render_template_string('''
+    return render_template_string("""
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -110,4 +126,4 @@ def logout():
         <p>Logged out</p>
     </body>
     </html>
-    ''')
+    """)
