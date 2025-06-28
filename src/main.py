@@ -104,6 +104,7 @@ def protected():
     </head>
     <body>
         <p>Hello, {current_user.username}!</p>
+        <p>protected page</p>
         <a href="/logout">Logout</a>
     </body>
     </html>

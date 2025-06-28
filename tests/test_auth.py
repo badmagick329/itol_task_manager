@@ -9,7 +9,7 @@ class TestAuth:
         resp = client.post(
             "/login",
             data={"username": "admin", "password": "wrong"},
-            follow_redirects=False
+            follow_redirects=False,
         )
         assert resp.status_code == 401
 
@@ -18,7 +18,7 @@ class TestAuth:
         resp = client.post(
             "/login",
             data={"username": "admin", "password": "test123"},
-            follow_redirects=True
+            follow_redirects=True,
         )
         assert b"Hello, admin!" in resp.data
 
