@@ -79,5 +79,8 @@ venv.bak/
 Thumbs.db
 ehthumbs.db
 
+# JS
+node_modules/
+
 # Misc
 notes/
