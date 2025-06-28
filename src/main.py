@@ -2,6 +2,7 @@ from flask import (
     Flask,
     abort,
     redirect,
+    render_template,
     render_template_string,
     request,
     url_for,
@@ -59,6 +60,12 @@ def hello_world():
     </body>
     </html>
     """)
+
+
+@app.route("/hello/")
+@app.route("/hello/<name>")
+def hello(name: str | None = None):
+    return render_template("hello.html", person=name)
 
 
 @app.route("/login", methods=["GET", "POST"])
