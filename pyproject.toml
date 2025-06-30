@@ -14,6 +14,9 @@ select        = ["E4", "E7", "E9", "F"]
 # extend-select = ["W", "C90", "C901", "D", "N", "I","ANN", "TID"]  # e.g. add type and tidy-import rules
 fixable       = ["ALL"]         # allow auto-fixing where safe
 
+[tools.pyright]
+exclude= [ "**/node_modules", "**/__pycache__"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
