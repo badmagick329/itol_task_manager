@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, render_template_string
+from flask.helpers import url_for
 
 main_bp = Blueprint("main", __name__)
 
@@ -11,4 +12,4 @@ def hello_world():
 @main_bp.route("/hello/")
 @main_bp.route("/hello/<name>")
 def hello(name=None):
-    return render_template("hello.html", person=name)
+    return render_template("hello.html", name=name)

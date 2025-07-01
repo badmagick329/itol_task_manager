@@ -2,6 +2,7 @@ from flask import (
     Blueprint,
     abort,
     redirect,
+    render_template,
     render_template_string,
     request,
     url_for,
@@ -24,7 +25,7 @@ def login():
             login_user(user)
             return redirect(url_for("main.protected"))
         abort(401)
-    return render_template_string("<form>TODO:</form>")
+    return render_template("auth/login.html")
 
 
 @auth_bp.route("/protected")
