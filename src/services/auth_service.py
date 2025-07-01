@@ -1,4 +1,4 @@
-from src.core.user import UserRepository
+from src.core.ports.user_repository import UserRepository
 
 
 class AuthService:

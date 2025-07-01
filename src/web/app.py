@@ -5,7 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 
 from src.config import Config
-from src.infra.in_memory_user import InMemoryUser
+from src.infra.repositories.in_memory_user import InMemoryUserRepository
 from src.services.auth_service import AuthService
 
 bcrypt = Bcrypt()
@@ -22,20 +22,24 @@ def create_app(config_class=Config):
     )
     app.config.from_object(config_class)
 
+    from src.infra.db import init_db
+
+    init_db()
+
     # extensions
     bcrypt.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"  # type: ignore
 
     # ports and services
-    user_repo = InMemoryUser(bcrypt)
+    user_repo = InMemoryUserRepository(bcrypt)
     # register AuthService as a Flask extension so blueprints can access it
     auth_service = AuthService(user_repo)
     app.extensions["auth_service"] = auth_service
 
     # user loader
     @login_manager.user_loader
-    def load_user(user_id):
+    def load_user(user_id: int):
         user = user_repo.find_by_username("admin")
         return user if user and str(user.id) == str(user_id) else None
 

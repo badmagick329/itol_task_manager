@@ -84,3 +84,4 @@ node_modules/
 
 # Misc
 notes/
+app.db*
