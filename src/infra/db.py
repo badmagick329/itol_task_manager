@@ -25,4 +25,17 @@ def init_db():
             );
             """
         )
+
+        # NOTE: Hardcoded admin for now. Remove later
+        from flask_bcrypt import Bcrypt
+
+        bcrypt = Bcrypt()
+        pw_hash = bcrypt.generate_password_hash("test123").decode()
+        conn.execute(
+            """
+            INSERT OR IGNORE INTO users (username, email, pw_hash)
+            VALUES (?, ?, ?)
+            """,
+            ("admin", "admin@admin.com", pw_hash),
+        )
         conn.commit()
