@@ -1,11 +1,45 @@
-{% extends 'base.html' %}
-{% block title %}Welcome{% endblock %}
-{% block content %}
-<form class="flex flex-col gap-2 items-center" action="/register" method="POST">
-  <input class="border-2 border-text-color rounded-md" type="text" name="username" placeholder="Enter username" autocomplete="off">
-  <input class="border-2 border-text-color rounded-md" type="email" name="email" placeholder="Enter email" autocomplete="off">
-  <input class="border-2 border-text-color rounded-md" type="password" name="password" placeholder="Enter password" autocomplete="off">
-  <input class="border-2 border-text-color rounded-md" type="password" name="password2" placeholder="Retype password" autocomplete="off">
-  <button type="submit">Register</button>
-</form>
+{% extends 'base.html' %} {% block title %}Register{% endblock %} {% block
+content %}
+<div class="container mx-auto pt-16">
+  <form
+    class="flex flex-col gap-4 items-center px-2"
+    action="/register"
+    method="POST"
+  >
+    <input
+      class="form-input"
+      type="text"
+      name="username"
+      placeholder="Enter username"
+      autocomplete="off"
+    />
+    <input
+      class="form-input"
+      type="email"
+      name="email"
+      placeholder="Enter email"
+      autocomplete="off"
+    />
+    <input
+      class="form-input"
+      type="password"
+      name="password"
+      placeholder="Enter password"
+      autocomplete="off"
+    />
+    <input
+      class="form-input"
+      type="password"
+      name="password2"
+      placeholder="Retype password"
+      autocomplete="off"
+    />
+    <div class="flex gap-4">
+      <button class="btn-primary" type="submit">Register</button>
+      <button class="btn-primary" type="button">
+        <a href="/login">Go to login</a>
+      </button>
+    </div>
+  </form>
+</div>
 {% endblock content %}

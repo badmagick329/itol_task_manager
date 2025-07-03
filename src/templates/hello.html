@@ -1,10 +1,6 @@
-{% extends 'base.html' %}
-{% block title %}Hello Page{% endblock %}
-{% block content %}
-
-  {% if person %}
-  <h1 class="bg-slate-800 text-fuchsia-500">Hello {{ person }}!</h1>
-  {% else %}
-  <h1>Hello, World!</h1>
-  {% endif %}
-{% endblock content %}
+{% extends 'base.html' %} {% block title %}Hello Page{% endblock %} {% block
+content %} {% if person %}
+<h1 class="bg-slate-800 text-fuchsia-500">Hello {{ person }}!</h1>
+{% else %}
+<h1>Hello, World!</h1>
+{% endif %} {% endblock content %}
