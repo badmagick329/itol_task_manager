@@ -1,6 +1,8 @@
 # Itol Task Manager
 
-## Setup
+## Setup and run
+
+### Install dependencies
 
 Install and activate venv then:
 
@@ -8,8 +10,27 @@ Install and activate venv then:
 pip install -r requirements.txt
 ```
 
-## Run
+### Initialize DB
+
+#### Set environment variable
+
+Powershell:
+```ps1
+$Env:FLASK_APP = "src.web.app:create_app"
+```
+Bash:
+```sh
+export FLASK_APP="src.web.app:create_app"
+```
+
+#### Run init command
 
 ```sh
-flask --app .\src\main.py run
+flask init-db
+```
+
+### Run
+
+```sh
+python3 .\src\main.py
 ```
