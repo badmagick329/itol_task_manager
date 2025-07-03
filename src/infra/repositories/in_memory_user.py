@@ -8,7 +8,7 @@ class InMemoryUserRepository(UserRepository):
     def __init__(self, bcrypt: Bcrypt):
         self.bcrypt = bcrypt
         # NOTE: hardcoded admin value
-        pw_hash = bcrypt.generate_password_hash("test123").decode()
+        pw_hash = self.bcrypt.generate_password_hash("test123").decode()
         self.users = {
             "admin": User(
                 id=1,
@@ -20,6 +20,22 @@ class InMemoryUserRepository(UserRepository):
 
     def find_by_username(self, username: str) -> User | None:
         return self.users.get(username)
+
+    def find_by_username_or_email(self, username_or_email: str) -> User | None:
+        for user in self.users.values():
+            if (
+                user.username == username_or_email
+                or user.email == username_or_email
+            ):
+                return user
+
+    def load_for_auth(self, username_or_email: str) -> User | None:
+        for user in self.users.values():
+            if (
+                user.username == username_or_email
+                or user.email == username_or_email
+            ):
+                return user
 
     def verify_password(self, user: User, password: str) -> bool:
         return self.bcrypt.check_password_hash(user.pw_hash, password)
@@ -36,3 +52,12 @@ class InMemoryUserRepository(UserRepository):
 
     def list_all(self) -> list[User]:
         return list(self.users.values())
+
+    def register(self, username: str, email: str, password: str) -> User:
+        if username in self.users:
+            raise ValueError("User already exists")
+
+        pw_hash = self.bcrypt.generate_password_hash(password).decode()
+        user = User(id=1, username=username, email=email, pw_hash=pw_hash)
+        self.users[username] = user
+        return user

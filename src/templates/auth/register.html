@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+<form class="flex flex-col gap-2 items-center" action="/register" method="POST">
+  <input class="border-2 border-text-color rounded-md" type="text" name="username" placeholder="Enter username" autocomplete="off">
+  <input class="border-2 border-text-color rounded-md" type="email" name="email" placeholder="Enter email" autocomplete="off">
+  <input class="border-2 border-text-color rounded-md" type="password" name="password" placeholder="Enter password" autocomplete="off">
+  <input class="border-2 border-text-color rounded-md" type="password" name="password2" placeholder="Retype password" autocomplete="off">
+  <button type="submit">Register</button>
+</form>
+{% endblock content %}

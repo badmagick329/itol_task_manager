@@ -3,11 +3,12 @@ from flask import (
     abort,
     redirect,
     render_template,
-    render_template_string,
     request,
     url_for,
 )
 from flask_login import current_user, login_required, login_user, logout_user
+
+from src.services.auth_service import AuthService
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -23,7 +24,7 @@ def login():
         )
         if user:
             login_user(user)
-            return redirect(url_for("main.protected"))
+            return redirect(url_for("auth.protected"))
         abort(401)
     return render_template("auth/login.html")
 
@@ -31,11 +32,35 @@ def login():
 @auth_bp.route("/protected")
 @login_required
 def protected():
-    return render_template_string(f"Hello {current_user.username}!")
+    return render_template(
+        "protected/home.html", username=current_user.username
+    )
 
 
 @auth_bp.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return render_template_string("Logged out")
+    return redirect(url_for("auth.login"))
+
+
+@auth_bp.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "GET":
+        return render_template("auth/register.html")
+
+    username = request.form["username"]
+    email = request.form["email"]
+    password = request.form["password"]
+    password2 = request.form["password2"]
+
+    from flask import current_app
+
+    auth_service: AuthService = current_app.extensions["auth_service"]
+    user = auth_service.register(
+        username=username, email=email, password=password, password2=password2
+    )
+
+    login_user(user)
+
+    return redirect(url_for("auth.protected"))
