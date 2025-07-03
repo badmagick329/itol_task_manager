@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}Login{% endblock %}
 {% block content %}
-<form class="flex flex-col items-center">
+<form class="flex flex-col gap-2 items-center" action="/login" method="POST">
   <input class="border-2 border-text-color rounded-md" type="text" name="username" placeholder="Enter username" autocomplete="off">
-  <input type="password" name="password" placeholder="Enter password" autocomplete="off">
+  <input class="border-2 border-text-color rounded-md" type="password" name="password" placeholder="Enter password" autocomplete="off">
+  <button type="submit">Login</button>
 </form>
 {% endblock content %}

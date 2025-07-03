@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+<div>
+  <p>Hello {{username}}!</p>
+  <form class="flex flex-col items-center" action="/logout">
+    <button type="submit">Logout</button>
+  </form>
+</div>
+{% endblock content %}
