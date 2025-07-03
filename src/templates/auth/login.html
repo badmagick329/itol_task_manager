@@ -1,9 +1,31 @@
-{% extends 'base.html' %}
-{% block title %}Login{% endblock %}
-{% block content %}
-<form class="flex flex-col gap-2 items-center" action="/login" method="POST">
-  <input class="border-2 border-text-color rounded-md" type="text" name="username" placeholder="Enter username" autocomplete="off">
-  <input class="border-2 border-text-color rounded-md" type="password" name="password" placeholder="Enter password" autocomplete="off">
-  <button type="submit">Login</button>
-</form>
+{% extends 'base.html' %} {% block title %}Login{% endblock %} {% block content
+%}
+<div class="container mx-auto pt-16">
+  <form
+    class="flex flex-col gap-4 items-center px-2"
+    action="/login"
+    method="POST"
+  >
+    <input
+      class="form-input"
+      type="text"
+      name="username"
+      placeholder="Enter username"
+      autocomplete="off"
+    />
+    <input
+      class="form-input"
+      type="password"
+      name="password"
+      placeholder="Enter password"
+      autocomplete="off"
+    />
+    <div class="flex gap-4">
+      <button class="btn-primary" type="submit">Login</button>
+      <button class="btn-primary" type="button">
+        <a href="/register">Go to Register</a>
+      </button>
+    </div>
+  </form>
+</div>
 {% endblock content %}

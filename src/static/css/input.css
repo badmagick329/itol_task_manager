@@ -4,12 +4,14 @@
   --primary-color: #1e40af; /* blue-800 */
   --secondary-color: #f59e0b; /* amber-400 */
   --accent-color: #ec4899; /* pink-500 */
-  --background-color: #0f172a; /* slate-900 */
+  --background-color: #020618; /* slate-950 */
+  --background-light-color: #0f172a; /* slate-900 */
   --foreground-color: #f8fafc; /* slate-50 */
   --border-color: #334155; /* slate-700 */
   --hover-color: #1d4ed8; /* blue-700 */
   --error-color: #dc2626; /* red-600 */
   --success-color: #16a34a; /* green-600 */
+  --ring-color: #2b7fff; /* blue-600 */
 }
 
 @theme {
@@ -17,9 +19,20 @@
   --color-secondary: var(--secondary-color);
   --color-accent: var(--accent-color);
   --color-background: var(--background-color);
+  --color-background-light: var(--background-light-color);
   --color-foreground: var(--foreground-color);
   --color-border: var(--border-color);
   --color-hover: var(--hover-color);
   --color-error: var(--error-color);
   --color-success: var(--success-color);
+  --color-ring: var(--ring-color);
+}
+
+.form-input {
+  @apply w-full px-4 py-2 border border-border rounded-md bg-white/2
+         focus:outline-none focus:ring-2 focus:ring-ring;
+}
+.btn-primary {
+  @apply inline-block px-5 py-2 bg-primary text-foreground rounded-md hover:cursor-pointer
+         hover:bg-primary/80 focus:outline-none focus:ring-2 focus:ring-ring;
 }

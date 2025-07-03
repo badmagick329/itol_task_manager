@@ -1,10 +1,11 @@
-{% extends 'base.html' %}
-{% block title %}Welcome{% endblock %}
-{% block content %}
-<div>
-  <p>Hello {{username}}!</p>
+{% extends 'base.html' %} {% block title %}Welcome{% endblock %} {% block
+content %}
+<div class="container mx-auto pt-16">
+  <p class="bg-background-light rounded-md px-6 py-2 mb-8">
+    Hello {{username}}!
+  </p>
   <form class="flex flex-col items-center" action="/logout">
-    <button type="submit">Logout</button>
+    <button class="btn-primary" type="submit">Logout</button>
   </form>
 </div>
 {% endblock content %}
