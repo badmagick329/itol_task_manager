@@ -12,7 +12,7 @@ class SQLUserRepository(UserRepository):
         self.bcrypt = bcrypt
 
     def find_by_username(self, username: str) -> User | None:
-        conn = get_connection()
+        conn = self._get_connection()
         cur = conn.execute(
             "SELECT id, username, email FROM users WHERE username = ?",
             (username,),
@@ -31,7 +31,7 @@ class SQLUserRepository(UserRepository):
         )
 
     def find_by_username_or_email(self, username_or_email: str) -> User | None:
-        conn = get_connection()
+        conn = self._get_connection()
         cur = conn.execute(
             "SELECT id, username, email FROM users WHERE username = ? OR email = ?",
             (username_or_email, username_or_email),
@@ -50,7 +50,7 @@ class SQLUserRepository(UserRepository):
         )
 
     def load_for_auth(self, username_or_email: str) -> User | None:
-        conn = get_connection()
+        conn = self._get_connection()
         cur = conn.execute(
             "SELECT id, username, email, pw_hash FROM users WHERE username = ? OR email = ?",
             (username_or_email, username_or_email),
@@ -72,7 +72,7 @@ class SQLUserRepository(UserRepository):
         return self.bcrypt.check_password_hash(user.pw_hash, password)
 
     def get_by_id(self, user_id: int) -> User | None:
-        conn = get_connection()
+        conn = self._get_connection()
         cur = conn.execute(
             "SELECT id, username, email FROM users WHERE id = ?", (user_id,)
         )
@@ -90,7 +90,7 @@ class SQLUserRepository(UserRepository):
         )
 
     def add(self, user: User) -> None:
-        conn = get_connection()
+        conn = self._get_connection()
         conn.execute(
             "INSERT INTO users (?,?,?,?)",
             (user.id, user.username, user.email, user.pw_hash),
@@ -98,7 +98,7 @@ class SQLUserRepository(UserRepository):
         conn.commit()
 
     def list_all(self) -> list[User]:
-        conn = get_connection()
+        conn = self._get_connection()
         cur = conn.execute("SELECT id, name, email FROM users")
         return [
             User(
@@ -112,7 +112,7 @@ class SQLUserRepository(UserRepository):
 
     def register(self, username: str, email: str, password: str) -> User:
         pw_hash = self.bcrypt.generate_password_hash(password).decode()
-        conn = get_connection()
+        conn = self._get_connection()
         cur = conn.execute(
             "SELECT id, username, email FROM users WHERE username = ? OR email = ?",
             (username, email),
@@ -142,3 +142,6 @@ class SQLUserRepository(UserRepository):
             email=row["email"],
             pw_hash=None,
         )
+
+    def _get_connection(self) -> Connection:
+        return get_connection()
