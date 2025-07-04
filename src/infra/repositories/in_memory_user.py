@@ -19,7 +19,16 @@ class InMemoryUserRepository(UserRepository):
         }
 
     def find_by_username(self, username: str) -> User | None:
-        return self.users.get(username)
+        result = self.users.get(username)
+        if result is None:
+            return None
+
+        return User(
+            id=result.id,
+            username=result.username,
+            email=result.email,
+            pw_hash=None,
+        )
 
     def find_by_username_or_email(self, username_or_email: str) -> User | None:
         for user in self.users.values():
@@ -27,7 +36,12 @@ class InMemoryUserRepository(UserRepository):
                 user.username == username_or_email
                 or user.email == username_or_email
             ):
-                return user
+                return User(
+                    id=user.id,
+                    username=user.username,
+                    email=user.email,
+                    pw_hash=None,
+                )
 
     def load_for_auth(self, username_or_email: str) -> User | None:
         for user in self.users.values():

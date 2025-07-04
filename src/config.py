@@ -4,5 +4,6 @@ class Config:
     TESTING = False
 
 
-class TestConfig:
+class TestConfig(Config):
     TESTING = True
+    DATABASE = ":memory:"
