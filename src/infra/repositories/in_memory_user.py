@@ -1,6 +1,8 @@
 from flask_bcrypt import Bcrypt
 
+from src.core.errors import DomainError, UsernameTaken, UserNotFoundError
 from src.core.ports.user_repository import UserRepository
+from src.core.result import Result
 from src.core.user import User
 
 
@@ -10,16 +12,6 @@ class InMemoryUserRepository(UserRepository):
     def __init__(self, bcrypt: Bcrypt):
         self.bcrypt = bcrypt
         self.users: dict[str, User] = {}
-        # NOTE: hardcoded admin value
-        # pw_hash = self.bcrypt.generate_password_hash("test123").decode()
-        # self.users = {
-        #     "admin": User(
-        #         id=1,
-        #         username="admin",
-        #         email="admin@admin.com",
-        #         pw_hash=pw_hash,
-        #     ),
-        # }
 
     def find_by_username(self, username: str) -> User | None:
         result = self.users.get(username)
@@ -65,26 +57,32 @@ class InMemoryUserRepository(UserRepository):
     def list_all(self) -> list[User]:
         return list(self.users.values())
 
-    def register(self, username: str, email: str, password: str) -> User:
+    def register(
+        self, username: str, email: str, password: str
+    ) -> Result[User, DomainError]:
         if username in self.users:
-            raise ValueError("User already exists")
+            return Result.Err(UsernameTaken(username))
 
         pw_hash = self.bcrypt.generate_password_hash(password).decode()
-        user = User(
+        user_result = User.create(
             id=self._current_id,
             username=username,
             email=email,
             pw_hash=pw_hash,
         )
+        if user_result.is_err:
+            return user_result
+
+        user = user_result.unwrap()
         if self._current_id == 1:
             user.is_admin = True
         self._current_id += 1
         self.users[username] = user
-        return user
+        return Result.Ok(user)
 
-    def delete(self, username_or_email: str) -> None:
+    def delete(self, username_or_email: str) -> None | DomainError:
         user = self.find_by_username_or_email(username_or_email)
         if user is None:
-            raise ValueError("User not found")
+            return UserNotFoundError(username_or_email)
 
         del self.users[user.username]

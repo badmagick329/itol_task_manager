@@ -2,7 +2,14 @@ from sqlite3 import Connection
 
 from flask_bcrypt import Bcrypt
 
+from src.core.errors import (
+    DomainError,
+    UserCreationError,
+    UsernameTaken,
+    UserNotFoundError,
+)
 from src.core.ports.user_repository import UserRepository
+from src.core.result import Result
 from src.core.user import User
 from src.infra.db import get_connection
 
@@ -108,7 +115,9 @@ class SQLUserRepository(UserRepository):
             for row in cur.fetchall()
         ]
 
-    def register(self, username: str, email: str, password: str) -> User:
+    def register(
+        self, username: str, email: str, password: str
+    ) -> Result[User, DomainError]:
         conn = self._get_connection()
         first_user = False
         cur = conn.execute(
@@ -125,7 +134,7 @@ class SQLUserRepository(UserRepository):
             )
 
             if cur.fetchone()["count"] > 0:
-                raise ValueError("User already exists")
+                return Result.Err(UsernameTaken(username))
 
         pw_hash = self.bcrypt.generate_password_hash(password).decode()
         conn.execute(
@@ -141,21 +150,26 @@ class SQLUserRepository(UserRepository):
 
         row = cur.fetchone()
         if not row:
-            raise ValueError("Could not create user entry during registration")
+            return Result.Err(UserCreationError())
 
-        return User(
+        user_result = User.create(
             id=row["id"],
             username=row["username"],
             email=row["email"],
             pw_hash=None,
             is_admin=bool(row["is_admin"]),
         )
+        if user_result.is_err:
+            return user_result
 
-    def delete(self, username_or_email: str) -> None:
+        user = user_result.unwrap()
+        return Result.Ok(user)
+
+    def delete(self, username_or_email: str) -> None | DomainError:
         conn = self._get_connection()
         user = self.find_by_username_or_email(username_or_email)
         if not user:
-            raise ValueError("User not found")
+            return UserNotFoundError(username_or_email)
 
         conn.execute(
             "DELETE FROM users WHERE id = ?",

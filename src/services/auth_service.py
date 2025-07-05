@@ -1,4 +1,6 @@
+from src.core.errors import DomainError, PasswordsDoNotMatchError
 from src.core.ports.user_repository import UserRepository
+from src.core.result import Result
 from src.core.user import User
 
 
@@ -16,9 +18,8 @@ class AuthService:
 
     def register(
         self, username: str, email: str, password: str, password2: str
-    ):
-        user = self.user_repo.find_by_username_or_email(username)
+    ) -> Result[User, DomainError]:
         if password != password2:
-            raise ValueError("Passwords do not match")
+            return Result.Err(PasswordsDoNotMatchError())
 
         return self.user_repo.register(username, email, password)

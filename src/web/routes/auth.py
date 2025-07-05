@@ -57,9 +57,15 @@ def register():
     from flask import current_app
 
     auth_service: AuthService = current_app.extensions["auth_service"]
-    user = auth_service.register(
+    user_result = auth_service.register(
         username=username, email=email, password=password, password2=password2
     )
+    if user_result.is_err:
+        return render_template(
+            "auth/register.html", error=user_result.unwrap_err()
+        )
+
+    user = user_result.unwrap()
 
     login_user(user)
 

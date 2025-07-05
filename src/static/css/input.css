@@ -10,6 +10,7 @@
   --border-color: #334155; /* slate-700 */
   --hover-color: #1d4ed8; /* blue-700 */
   --error-color: #dc2626; /* red-600 */
+  --error-background: #fee2e2; /* red-100 */
   --success-color: #16a34a; /* green-600 */
   --ring-color: #2b7fff; /* blue-600 */
 }
@@ -24,15 +25,18 @@
   --color-border: var(--border-color);
   --color-hover: var(--hover-color);
   --color-error: var(--error-color);
+  --color-error-background: var(--error-background);
   --color-success: var(--success-color);
   --color-ring: var(--ring-color);
 }
 
 .form-input {
-  @apply w-full px-4 py-2 border border-border rounded-md bg-white/2
-         focus:outline-none focus:ring-2 focus:ring-ring;
+  @apply border-border focus:ring-ring w-full rounded-md border bg-white/2 px-4 py-2 focus:ring-2 focus:outline-none;
 }
 .btn-primary {
-  @apply inline-block px-5 py-2 bg-primary text-foreground rounded-md hover:cursor-pointer
-         hover:bg-primary/80 focus:outline-none focus:ring-2 focus:ring-ring;
+  @apply bg-primary text-foreground hover:bg-primary/80 focus:ring-ring inline-block rounded-md px-5 py-2 hover:cursor-pointer focus:ring-2 focus:outline-none;
+}
+
+.error-message {
+  @apply text-error bg-error-background border-error/60 rounded-md border-2 px-4 py-1.5;
 }
