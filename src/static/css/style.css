@@ -15,8 +15,6 @@
     --default-font-family: var(--font-sans);
     --default-mono-font-family: var(--font-mono);
     --color-primary: var(--primary-color);
-    --color-secondary: var(--secondary-color);
-    --color-accent: var(--accent-color);
     --color-background: var(--background-color);
     --color-background-light: var(--background-light-color);
     --color-foreground: var(--foreground-color);

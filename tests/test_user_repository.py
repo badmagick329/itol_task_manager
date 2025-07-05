@@ -36,8 +36,22 @@ def test_load_for_auth(db, bcrypt):
     assert repo.verify_password(fetched, "hunter2")
 
 
-def test_register_and_find_in_memory(db, bcrypt):
+def test_first_user_is_admin(db, bcrypt):
+    repo = SQLUserRepository(bcrypt=bcrypt)
+    users = repo.list_all()
+    for user in users:
+        repo.delete(user.username)
+    user = repo.register("bob", "bob@example.com", "hunter2")
+
+    assert isinstance(user, User)
+    assert user.is_admin
+
+
+def test_register_and_find_in_memory(db, bcrypt, test_admin):
     repo = InMemoryUserRepository(bcrypt=bcrypt)
+    repo.register(
+        test_admin["username"], test_admin["email"], test_admin["password"]
+    )
     user = repo.register("bob", "bob@example.com", "hunter2")
     assert isinstance(user, User)
     fetched = repo.find_by_username("bob")
@@ -45,8 +59,11 @@ def test_register_and_find_in_memory(db, bcrypt):
     assert fetched.pw_hash is None
 
 
-def test_find_by_username_or_email_in_memory(db, bcrypt):
+def test_find_by_username_or_email_in_memory(db, bcrypt, test_admin):
     repo = InMemoryUserRepository(bcrypt=bcrypt)
+    repo.register(
+        test_admin["username"], test_admin["email"], test_admin["password"]
+    )
     user = repo.register("bob", "bob@example.com", "hunter2")
     assert isinstance(user, User)
     fetched = repo.find_by_username_or_email("bob")
@@ -58,8 +75,11 @@ def test_find_by_username_or_email_in_memory(db, bcrypt):
     assert fetched_by_email.pw_hash is None
 
 
-def test_load_for_auth_in_memory(db, bcrypt):
+def test_load_for_auth_in_memory(db, bcrypt, test_admin):
     repo = InMemoryUserRepository(bcrypt=bcrypt)
+    repo.register(
+        test_admin["username"], test_admin["email"], test_admin["password"]
+    )
     user = repo.register("bob", "bob@example.com", "hunter2")
 
     assert isinstance(user, User)
@@ -67,3 +87,11 @@ def test_load_for_auth_in_memory(db, bcrypt):
     assert fetched and fetched.username == "bob"
     assert fetched.email == "bob@example.com"
     assert repo.verify_password(fetched, "hunter2")
+
+
+def test_first_user_is_admin_in_memory(db, bcrypt):
+    repo = InMemoryUserRepository(bcrypt=bcrypt)
+    user = repo.register("bob", "bob@example.com", "hunter2")
+
+    assert isinstance(user, User)
+    assert user.is_admin

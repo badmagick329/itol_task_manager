@@ -3,17 +3,24 @@ class User:
     username: str
     email: str
     pw_hash: str | None
+    is_admin: bool
     # Python 3 implicitly set __hash__ to None if we override __eq__
     # We set it back to its default implementation
     __hash__ = object.__hash__
 
     def __init__(
-        self, id: int, username: str, email: str, pw_hash: str | None
+        self,
+        id: int,
+        username: str,
+        email: str,
+        pw_hash: str | None,
+        is_admin: bool = False,
     ):
         self.id = id
         self.username = username
         self.email = email
         self.pw_hash = pw_hash
+        self.is_admin = is_admin
 
     # Properties expected by flask_login:
     @property

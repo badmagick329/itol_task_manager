@@ -44,14 +44,31 @@ def bcrypt(app):
 
 
 @pytest.fixture(autouse=True)
-def db(app, bcrypt):
+def db(app, bcrypt, test_admin):
     from src.infra.db import (
         close_db,
+        create_test_admin,
         get_connection,
         init_db,
     )
 
     with app.app_context():
         init_db(bcrypt)
+        create_test_admin(
+            bcrypt,
+            test_admin["username"],
+            test_admin["email"],
+            test_admin["password"],
+        )
+
         yield get_connection()
         close_db()
+
+
+@pytest.fixture
+def test_admin(app) -> dict[str, str]:
+    return {
+        "username": "admin",
+        "email": "admin@admin.com",
+        "password": "test123",
+    }
