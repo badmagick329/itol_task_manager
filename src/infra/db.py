@@ -42,20 +42,24 @@ def init_db(bcrypt: Bcrypt):
             id INTEGER PRIMARY KEY,
             username TEXT NOT NULL UNIQUE,
             email TEXT NOT NULL UNIQUE,
-            pw_hash TEXT NOT NULL
+            pw_hash TEXT NOT NULL,
+            is_admin BOOLEAN NOT NULL DEFAULT 0
         );
         """
     )
+    conn.commit()
 
-    # NOTE: Hardcoded admin for now. Remove later
 
-    pw_hash = bcrypt.generate_password_hash("test123").decode()
-
+def create_test_admin(
+    bcrypt: Bcrypt, username: str, email: str, password: str
+):
+    conn = get_connection()
+    pw_hash = bcrypt.generate_password_hash(password).decode()
     conn.execute(
         """
-        INSERT OR IGNORE INTO users (username, email, pw_hash)
-        VALUES (?, ?, ?)
+        INSERT OR IGNORE INTO users (username, email, pw_hash, is_admin)
+        VALUES (?, ?, ?, ?)
         """,
-        ("admin", "admin@admin.com", pw_hash),
+        (username, email, pw_hash, True),
     )
     conn.commit()
