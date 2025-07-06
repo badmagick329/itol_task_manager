@@ -40,3 +40,7 @@
 .error-message {
   @apply text-error bg-error-background border-error/60 rounded-md border-2 px-4 py-1.5;
 }
+
+.error-container {
+  @apply flex justify-center;
+}

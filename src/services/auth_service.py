@@ -1,7 +1,15 @@
-from src.core.errors import DomainError, PasswordsDoNotMatchError
-from src.core.ports.user_repository import UserRepository
+from typing import Union
+
+from src.core.errors import (
+    ApplicationError,
+    PasswordsDoNotMatchError,
+)
+from src.core.ports.user_repository import RepositoryError, UserRepository
 from src.core.result import Result
 from src.core.user import User
+
+RegistrationError = Union[RepositoryError, ApplicationError]
+LoginError = Union[RepositoryError, ApplicationError]
 
 
 class AuthService:
@@ -18,8 +26,11 @@ class AuthService:
 
     def register(
         self, username: str, email: str, password: str, password2: str
-    ) -> Result[User, DomainError]:
+    ) -> Result[User, RegistrationError]:
         if password != password2:
             return Result.Err(PasswordsDoNotMatchError())
 
-        return self.user_repo.register(username, email, password)
+        result = self.user_repo.register(username, email, password)
+        if result.is_err:
+            return Result.Err(result.unwrap_err())
+        return Result.Ok(result.unwrap())

@@ -1,6 +1,10 @@
 import re
 
-from src.core.errors import DomainError, InvalidEmail, InvalidUsername
+from src.core.errors import (
+    InvalidEmail,
+    InvalidUsername,
+    ValidationError,
+)
 from src.core.result import Result
 
 
@@ -47,11 +51,11 @@ class User:
         email: str,
         pw_hash: str | None,
         is_admin: bool = False,
-    ) -> Result["User", DomainError]:
+    ) -> Result["User", ValidationError]:
         """Creates a new User instance. Use this method instead of the constructor to ensure validation.
 
         Returns:
-            Result["User", DomainError]: The created User instance or a DomainError.
+            Result["User", ValidationError]: The created User instance or a ValidationError.
         """
         err = cls._validate(username, email)
         if err is not None:
@@ -145,7 +149,7 @@ class User:
         raise NotImplementedError("Cannot compare User with non-User")
 
     @classmethod
-    def _validate(cls, username: str, email: str) -> DomainError | None:
+    def _validate(cls, username: str, email: str) -> ValidationError | None:
         if cls._validate_email(email) is False:
             return InvalidEmail(email)
 

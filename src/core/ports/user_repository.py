@@ -1,8 +1,11 @@
 from abc import ABC, abstractmethod
+from typing import Union
 
-from src.core.errors import DomainError
+from src.core.errors import DomainError, InfrastructureError, ValidationError
 from src.core.result import Result
 from src.core.user import User
+
+RepositoryError = Union[DomainError, ValidationError, InfrastructureError]
 
 
 class UserRepository(ABC):
@@ -29,7 +32,7 @@ class UserRepository(ABC):
     @abstractmethod
     def register(
         self, username: str, email: str, password: str
-    ) -> Result[User, DomainError]: ...
+    ) -> Result[User, RepositoryError]: ...
 
     @abstractmethod
     def delete(self, username_or_email: str) -> None | DomainError: ...

@@ -8,7 +8,7 @@ from src.core.errors import (
     UsernameTaken,
     UserNotFoundError,
 )
-from src.core.ports.user_repository import UserRepository
+from src.core.ports.user_repository import RepositoryError, UserRepository
 from src.core.result import Result
 from src.core.user import User
 from src.infra.db import get_connection
@@ -117,7 +117,7 @@ class SQLUserRepository(UserRepository):
 
     def register(
         self, username: str, email: str, password: str
-    ) -> Result[User, DomainError]:
+    ) -> Result[User, RepositoryError]:
         conn = self._get_connection()
         first_user = False
         cur = conn.execute(
@@ -160,7 +160,8 @@ class SQLUserRepository(UserRepository):
             is_admin=bool(row["is_admin"]),
         )
         if user_result.is_err:
-            return user_result
+            # Convert ValidationError to the expected error type
+            return Result.Err(user_result.unwrap_err())
 
         user = user_result.unwrap()
         return Result.Ok(user)

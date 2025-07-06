@@ -27,5 +27,10 @@
       </button>
     </div>
   </form>
+  {% if error %}
+  <div class="error-container">
+    <p class="error-message">{{ error }}</p>
+  </div>
+  {% endif %}
 </div>
 {% endblock content %}

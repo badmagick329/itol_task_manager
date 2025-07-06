@@ -1,7 +1,11 @@
 from flask_bcrypt import Bcrypt
 
-from src.core.errors import DomainError, UsernameTaken, UserNotFoundError
-from src.core.ports.user_repository import UserRepository
+from src.core.errors import (
+    DomainError,
+    UsernameTaken,
+    UserNotFoundError,
+)
+from src.core.ports.user_repository import RepositoryError, UserRepository
 from src.core.result import Result
 from src.core.user import User
 
@@ -59,7 +63,7 @@ class InMemoryUserRepository(UserRepository):
 
     def register(
         self, username: str, email: str, password: str
-    ) -> Result[User, DomainError]:
+    ) -> Result[User, RepositoryError]:
         if username in self.users:
             return Result.Err(UsernameTaken(username))
 
@@ -71,7 +75,8 @@ class InMemoryUserRepository(UserRepository):
             pw_hash=pw_hash,
         )
         if user_result.is_err:
-            return user_result
+            # Convert ValidationError to the expected error type
+            return Result.Err(user_result.unwrap_err())
 
         user = user_result.unwrap()
         if self._current_id == 1:
