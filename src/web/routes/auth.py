@@ -1,6 +1,5 @@
 from flask import (
     Blueprint,
-    abort,
     redirect,
     render_template,
     request,
@@ -17,15 +16,17 @@ auth_bp = Blueprint("auth", __name__)
 def login():
     from flask import current_app
 
-    service = current_app.extensions["auth_service"]
+    service: AuthService = current_app.extensions["auth_service"]
     if request.method == "POST":
-        user = service.authenticate(
+        auth_result = service.authenticate(
             request.form["username"], request.form["password"]
         )
-        if user:
-            login_user(user)
-            return redirect(url_for("auth.protected"))
-        abort(401)
+        if auth_result.is_err:
+            return render_template(
+                "auth/login.html", error=auth_result.unwrap_err()
+            )
+        login_user(auth_result.unwrap())
+        return redirect(url_for("auth.protected"))
     return render_template("auth/login.html")
 
 

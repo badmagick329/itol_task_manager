@@ -1,3 +1,22 @@
+from contextlib import contextmanager
+
+from flask import template_rendered
+
+
+@contextmanager
+def capture_templates(app):
+    recorded = []
+
+    def record(sender, template, context, **extra):
+        recorded.append((template, context))
+
+    template_rendered.connect(record, app)
+    try:
+        yield recorded
+    finally:
+        template_rendered.disconnect(record, app)
+
+
 class TestAuth:
     def test_protected_redirects_if_not_logged_in(self, client):
         resp = client.get("/protected", follow_redirects=False)
@@ -5,13 +24,18 @@ class TestAuth:
         assert resp.status_code == 302
         assert "/login" in resp.headers["Location"]
 
-    def test_login_with_bad_credentials(self, client):
-        resp = client.post(
-            "/login",
-            data={"username": "admin", "password": "wrong"},
-            follow_redirects=False,
-        )
-        assert resp.status_code == 401
+    def test_login_with_bad_credentials(self, client, app):
+        with capture_templates(app) as templates:
+            resp = client.post(
+                "/login",
+                data={"username": "admin", "password": "wrong"},
+                follow_redirects=True,
+            )
+
+        assert resp.status_code == 200
+        assert len(templates) == 1
+        template, context = templates[0]
+        assert "error" in context
 
     def test_login_logout_flow(self, client):
         # log in
@@ -33,3 +57,18 @@ class TestAuth:
         resp4 = client.get("/protected", follow_redirects=False)
         assert resp4.status_code == 302
         assert "/login" in resp4.headers["Location"]
+
+    def test_user_creation_fails_on_bad_credentials(self, client):
+        resp = client.post(
+            "/register",
+            data={
+                "username": "newuser",
+                "email": "newuser@example@.com",
+                "password": "test123",
+                "password2": "test123",
+            },
+        )
+
+        repo = client.application.extensions["user_repo"]
+        user = repo.find_by_username("newuser")
+        assert user is None

@@ -43,6 +43,7 @@ def create_app(config_class=Config):
     user_repo = SQLUserRepository(bcrypt=bcrypt)
     auth_service = AuthService(user_repo)
     app.extensions["auth_service"] = auth_service
+    app.extensions["user_repo"] = user_repo
 
     # user loader
     @login_manager.user_loader
