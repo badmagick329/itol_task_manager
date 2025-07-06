@@ -7,6 +7,7 @@ from src.core.errors import (
     UserCreationError,
     UsernameTaken,
     UserNotFoundError,
+    ValidationError,
 )
 from src.core.ports.user_repository import RepositoryError, UserRepository
 from src.core.result import Result
@@ -119,27 +120,63 @@ class SQLUserRepository(UserRepository):
         self, username: str, email: str, password: str
     ) -> Result[User, RepositoryError]:
         conn = self._get_connection()
-        first_user = False
+        first_user = self._repo_is_empty(conn)
+
+        if not first_user and self._username_is_taken(conn, username, email):
+            return Result.Err(UsernameTaken(username))
+
+        created_user_result = self._create_user(
+            conn=conn,
+            username=username,
+            email=email,
+            password=password,
+            is_admin=first_user,
+        )
+        if created_user_result.is_err:
+            # Convert ValidationError to the expected error type
+            return Result.Err(created_user_result.unwrap_err())
+
+        return Result.Ok(created_user_result.unwrap())
+
+    def _repo_is_empty(self, conn: Connection) -> bool:
         cur = conn.execute(
             "SELECT COUNT(*) as count FROM users",
             (),
         )
         row = cur.fetchone()
-        first_user = row and row["count"] == 0
+        return row and row["count"] == 0
 
-        if not first_user:
-            cur = conn.execute(
-                "SELECT COUNT(*) as count FROM users WHERE username = ? OR email = ?",
-                (username, email),
-            )
+    def _username_is_taken(
+        self, conn: Connection, username: str, email: str
+    ) -> bool:
+        cur = conn.execute(
+            "SELECT COUNT(*) as count FROM users WHERE username = ? OR email = ?",
+            (username, email),
+        )
 
-            if cur.fetchone()["count"] > 0:
-                return Result.Err(UsernameTaken(username))
+        return cur.fetchone()["count"] > 0
 
+    def _create_user(
+        self, conn, username: str, email: str, password: str, is_admin: bool
+    ) -> Result[User, UserCreationError]:
         pw_hash = self.bcrypt.generate_password_hash(password).decode()
+
+        created_user_result = User.create(
+            id=0,  # ID will be assigned by the database
+            username=username,
+            email=email,
+            pw_hash=pw_hash,
+            is_admin=is_admin,
+        )
+        if created_user_result.is_err:
+            # Convert ValidationError to the expected error type
+            return Result.Err(created_user_result.unwrap_err())
+
+        created_user = created_user_result.unwrap()
+
         conn.execute(
             "INSERT INTO users (username, email, pw_hash, is_admin) VALUES (?, ?, ?, ?)",
-            (username, email, pw_hash, first_user),
+            (created_user.username, created_user.email, pw_hash, is_admin),
         )
         conn.commit()
 
@@ -152,19 +189,15 @@ class SQLUserRepository(UserRepository):
         if not row:
             return Result.Err(UserCreationError())
 
-        user_result = User.create(
-            id=row["id"],
-            username=row["username"],
-            email=row["email"],
-            pw_hash=None,
-            is_admin=bool(row["is_admin"]),
+        return Result.Ok(
+            User(
+                id=row["id"],
+                username=row["username"],
+                email=row["email"],
+                pw_hash=None,
+                is_admin=bool(row["is_admin"]),
+            )
         )
-        if user_result.is_err:
-            # Convert ValidationError to the expected error type
-            return Result.Err(user_result.unwrap_err())
-
-        user = user_result.unwrap()
-        return Result.Ok(user)
 
     def delete(self, username_or_email: str) -> None | DomainError:
         conn = self._get_connection()
