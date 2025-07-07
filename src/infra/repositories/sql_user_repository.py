@@ -4,10 +4,11 @@ from flask_bcrypt import Bcrypt
 
 from src.core.errors import (
     DomainError,
+    EmailTaken,
+    InvalidPassword,
     UserCreationError,
     UsernameTaken,
     UserNotFoundError,
-    ValidationError,
 )
 from src.core.ports.user_repository import RepositoryError, UserRepository
 from src.core.result import Result
@@ -122,8 +123,14 @@ class SQLUserRepository(UserRepository):
         conn = self._get_connection()
         first_user = self._repo_is_empty(conn)
 
-        if not first_user and self._username_is_taken(conn, username, email):
+        if not first_user and self._username_is_taken(conn, username):
             return Result.Err(UsernameTaken(username))
+
+        if not first_user and self._email_is_taken(conn, email):
+            return Result.Err(EmailTaken(email))
+
+        if self._password_is_too_short(password):
+            return Result.Err(InvalidPassword(password))
 
         created_user_result = self._create_user(
             conn=conn,
@@ -133,7 +140,6 @@ class SQLUserRepository(UserRepository):
             is_admin=first_user,
         )
         if created_user_result.is_err:
-            # Convert ValidationError to the expected error type
             return Result.Err(created_user_result.unwrap_err())
 
         return Result.Ok(created_user_result.unwrap())
@@ -146,14 +152,19 @@ class SQLUserRepository(UserRepository):
         row = cur.fetchone()
         return row and row["count"] == 0
 
-    def _username_is_taken(
-        self, conn: Connection, username: str, email: str
-    ) -> bool:
+    def _username_is_taken(self, conn: Connection, username: str) -> bool:
         cur = conn.execute(
-            "SELECT COUNT(*) as count FROM users WHERE username = ? OR email = ?",
-            (username, email),
+            "SELECT COUNT(*) as count FROM users WHERE username = ?",
+            (username,),
         )
 
+        return cur.fetchone()["count"] > 0
+
+    def _email_is_taken(self, conn: Connection, email: str) -> bool:
+        cur = conn.execute(
+            "SELECT COUNT(*) as count FROM users WHERE email = ?",
+            (email,),
+        )
         return cur.fetchone()["count"] > 0
 
     def _create_user(
@@ -169,7 +180,6 @@ class SQLUserRepository(UserRepository):
             is_admin=is_admin,
         )
         if created_user_result.is_err:
-            # Convert ValidationError to the expected error type
             return Result.Err(created_user_result.unwrap_err())
 
         created_user = created_user_result.unwrap()
@@ -213,3 +223,6 @@ class SQLUserRepository(UserRepository):
 
     def _get_connection(self) -> Connection:
         return get_connection()
+
+    def _password_is_too_short(self, password: str) -> bool:
+        return len(password) < self.min_password_length

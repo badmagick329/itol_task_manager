@@ -2,6 +2,7 @@
 %}
 <div class="container mx-auto pt-16">
   <form
+    id="login-form"
     class="mb-4 flex flex-col items-center gap-4 px-2"
     action="/login"
     method="POST"
@@ -12,6 +13,7 @@
       name="username"
       placeholder="Enter username"
       autocomplete="off"
+      required
     />
     <input
       class="form-input"
@@ -19,6 +21,7 @@
       name="password"
       placeholder="Enter password"
       autocomplete="off"
+      required
     />
     <div class="flex gap-4">
       <button class="btn-primary" type="submit">Login</button>
@@ -27,10 +30,8 @@
       </button>
     </div>
   </form>
-  {% if error %}
-  <div class="error-container">
-    <p class="error-message">{{ error }}</p>
+  <div id="login-error" class="mb-4 hidden justify-center">
+    <p id="login-error-message" class="error-message"></p>
   </div>
-  {% endif %}
 </div>
 {% endblock content %}

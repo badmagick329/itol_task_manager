@@ -82,6 +82,12 @@ class UsernameTaken(DomainError):
         self.username = username
 
 
+class EmailTaken(DomainError):
+    def __init__(self, email: str):
+        super().__init__(f"Email already taken: {email}")
+        self.email = email
+
+
 class UserNotFoundError(DomainError):
     def __init__(self, username_or_email: str):
         super().__init__(f"User not found: {username_or_email}")
