@@ -10,6 +10,7 @@ import click
 from src.config import Config
 from src.infra.repositories.in_memory_user import InMemoryUserRepository
 from src.infra.repositories.sql_user_repository import SQLUserRepository
+from src.services.api_response_service import ApiResponseService
 from src.services.auth_service import AuthService
 
 bcrypt = Bcrypt()
@@ -44,6 +45,7 @@ def create_app(config_class=Config):
     auth_service = AuthService(user_repo)
     app.extensions["auth_service"] = auth_service
     app.extensions["user_repo"] = user_repo
+    app.extensions["api_response_service"] = ApiResponseService()
 
     # user loader
     @login_manager.user_loader

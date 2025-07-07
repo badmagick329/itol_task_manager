@@ -9,6 +9,8 @@ RepositoryError = Union[DomainError, ValidationError, InfrastructureError]
 
 
 class UserRepository(ABC):
+    min_password_length: int = 8
+
     @abstractmethod
     def find_by_username(self, username: str) -> User | None: ...
 

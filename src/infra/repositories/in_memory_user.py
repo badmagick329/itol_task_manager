@@ -67,6 +67,7 @@ class InMemoryUserRepository(UserRepository):
         if username in self.users:
             return Result.Err(UsernameTaken(username))
 
+        # NOTE: validation would go here but this is just a demo class
         pw_hash = self.bcrypt.generate_password_hash(password).decode()
         user_result = User.create(
             id=self._current_id,
@@ -75,7 +76,6 @@ class InMemoryUserRepository(UserRepository):
             pw_hash=pw_hash,
         )
         if user_result.is_err:
-            # Convert ValidationError to the expected error type
             return Result.Err(user_result.unwrap_err())
 
         user = user_result.unwrap()

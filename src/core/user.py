@@ -19,6 +19,7 @@ class User:
     __hash__ = object.__hash__
     min_length: int = 3
     username_regex = re.compile(r"^[A-Za-z0-9_-]+$")
+    email_re = r"^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
 
     def __init__(
         self,
@@ -166,9 +167,8 @@ class User:
         Returns:
             bool: True if the email is valid, False otherwise.
         """
-        email_re = r"^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
 
-        return re.match(email_re, email) is not None
+        return re.match(cls.email_re, email) is not None
 
     @classmethod
     def _validate_username(cls, username: str) -> bool:
