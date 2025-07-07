@@ -94,6 +94,12 @@ class UserNotFoundError(DomainError):
         self.username_or_email = username_or_email
 
 
+class TaskNotFoundError(DomainError):
+    def __init__(self, task_id: int):
+        super().__init__(f"Task not found: {task_id}")
+        self.task_id = task_id
+
+
 # =============================================================================
 # Application Service Errors
 # =============================================================================

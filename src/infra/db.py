@@ -47,6 +47,21 @@ def init_db(bcrypt: Bcrypt):
         );
         """
     )
+
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS tasks (
+            id INTEGER PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            title TEXT NOT NULL CHECK (LENGTH(title) <= 100),
+            description TEXT CHECK (LENGTH(description) <= 500),
+            due_date DATE NOT NULL,
+            status TEXT NOT NULL CHECK (status IN ('To Do', 'In Progress', 'Completed')),
+            FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+        );
+        """
+    )
+
     conn.commit()
 
 
