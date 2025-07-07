@@ -10,8 +10,8 @@ import click
 from src.config import Config
 from src.infra.repositories.in_memory_user import InMemoryUserRepository
 from src.infra.repositories.sql_user_repository import SQLUserRepository
+from src.services.account_service import AccountService
 from src.services.api_response_service import ApiResponseService
-from src.services.auth_service import AuthService
 
 bcrypt = Bcrypt()
 login_manager = LoginManager()
@@ -42,8 +42,8 @@ def create_app(config_class=Config):
 
     # ports and services
     user_repo = SQLUserRepository(bcrypt=bcrypt)
-    auth_service = AuthService(user_repo)
-    app.extensions["auth_service"] = auth_service
+    account_service = AccountService(user_repo)
+    app.extensions["account_service"] = account_service
     app.extensions["user_repo"] = user_repo
     app.extensions["api_response_service"] = ApiResponseService()
 

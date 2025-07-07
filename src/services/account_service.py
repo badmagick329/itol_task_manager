@@ -12,7 +12,7 @@ from src.core.user import User
 RegistrationError = Union[RepositoryError, ApplicationError]
 
 
-class AuthService:
+class AccountService:
     def __init__(self, user_repo: UserRepository):
         self.user_repo = user_repo
 

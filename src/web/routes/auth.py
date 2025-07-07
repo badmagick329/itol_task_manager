@@ -7,8 +7,8 @@ from flask import (
 )
 from flask_login import current_user, login_required, login_user, logout_user
 
+from src.services.account_service import AccountService
 from src.services.api_response_service import ApiResponseService
-from src.services.auth_service import AuthService
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -20,11 +20,11 @@ def login():
 
     from flask import current_app
 
-    auth_service: AuthService = current_app.extensions["auth_service"]
+    account_service: AccountService = current_app.extensions["account_service"]
     api_response_service: ApiResponseService = current_app.extensions[
         "api_response_service"
     ]
-    auth_result = auth_service.authenticate(
+    auth_result = account_service.authenticate(
         request.form["username"], request.form["password"]
     )
 
@@ -72,11 +72,11 @@ def register():
 
     from flask import current_app
 
-    auth_service: AuthService = current_app.extensions["auth_service"]
+    account_service: AccountService = current_app.extensions["account_service"]
     api_response_service: ApiResponseService = current_app.extensions[
         "api_response_service"
     ]
-    user_result = auth_service.register(
+    user_result = account_service.register(
         username=username, email=email, password=password, password2=password2
     )
     if user_result.is_err:
