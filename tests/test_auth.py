@@ -18,6 +18,7 @@ def capture_templates(app):
 
 
 def test_protected_redirects_if_not_logged_in(client):
+    """Test that accessing the protected route redirects to login if not logged in."""
     resp = client.get("/protected", follow_redirects=False)
     # Flask-Login default is a 302 redirect to /login
     assert resp.status_code == 302
@@ -25,6 +26,7 @@ def test_protected_redirects_if_not_logged_in(client):
 
 
 def test_login_with_bad_credentials(client, app):
+    """Test that login fails with incorrect credentials."""
     resp = client.post(
         "/login",
         data={"username": "admin", "password": "wrong"},
@@ -39,6 +41,7 @@ def test_login_with_bad_credentials(client, app):
 
 
 def test_login_logout_flow(client):
+    """Test the login and logout flow."""
     # log in
     resp = client.post(
         "/login",
@@ -69,6 +72,7 @@ def test_login_logout_flow(client):
 
 
 def test_user_creation_fails_on_bad_credentials(client):
+    """Test that user registration fails with invalid email format."""
     resp = client.post(
         "/register",
         data={
