@@ -1,4 +1,9 @@
-from src.core.errors import InvalidEmail, InvalidUsername, UsernameTaken
+from src.core.errors import (
+    EmailTaken,
+    InvalidEmail,
+    InvalidUsername,
+    UsernameTaken,
+)
 from src.core.user import User
 from src.infra.repositories.in_memory_user import InMemoryUserRepository
 from src.infra.repositories.sql_user_repository import SQLUserRepository
@@ -9,7 +14,7 @@ from src.infra.repositories.sql_user_repository import SQLUserRepository
 def test_register_and_find_sql_valid_user(db, bcrypt):
     """Test successful user registration and retrieval with SQL repository."""
     repo = SQLUserRepository(bcrypt=bcrypt)
-    result = repo.register("bob", "bob@example.com", "hunter2")
+    result = repo.register("bob", "bob@example.com", "hunter22")
     assert result.is_ok
     user = result.unwrap()
     assert isinstance(user, User)
@@ -22,7 +27,7 @@ def test_register_and_find_sql_valid_user(db, bcrypt):
 def test_register_sql_invalid_email(db, bcrypt):
     """Test user registration fails with invalid email format."""
     repo = SQLUserRepository(bcrypt=bcrypt)
-    result = repo.register("bob", "invalid-email", "hunter2")
+    result = repo.register("bob", "invalid-email", "hunter22")
     assert result.is_err
     error = result.unwrap_err()
     assert isinstance(error, InvalidEmail)
@@ -32,7 +37,7 @@ def test_register_sql_invalid_email(db, bcrypt):
 def test_register_sql_invalid_username_too_short(db, bcrypt):
     """Test user registration fails with username that is too short."""
     repo = SQLUserRepository(bcrypt=bcrypt)
-    result = repo.register("ab", "bob@example.com", "hunter2")
+    result = repo.register("ab", "bob@example.com", "hunter22")
     assert result.is_err
     error = result.unwrap_err()
     assert isinstance(error, InvalidUsername)
@@ -42,7 +47,7 @@ def test_register_sql_invalid_username_too_short(db, bcrypt):
 def test_register_sql_invalid_username_special_chars(db, bcrypt):
     """Test user registration fails with username containing invalid characters."""
     repo = SQLUserRepository(bcrypt=bcrypt)
-    result = repo.register("bob@invalid", "bob@example.com", "hunter2")
+    result = repo.register("bob@invalid", "bob@example.com", "hunter22")
     assert result.is_err
     error = result.unwrap_err()
     assert isinstance(error, InvalidUsername)
@@ -53,7 +58,7 @@ def test_register_sql_duplicate_username(db, bcrypt):
     """Test user registration fails when username is already taken."""
     repo = SQLUserRepository(bcrypt=bcrypt)
     # Register first user
-    result1 = repo.register("bob", "bob@example.com", "hunter2")
+    result1 = repo.register("bob", "bob@example.com", "hunter22")
     assert result1.is_ok
 
     # Try to register with same username
@@ -68,20 +73,20 @@ def test_register_sql_duplicate_email(db, bcrypt):
     """Test user registration fails when email is already taken."""
     repo = SQLUserRepository(bcrypt=bcrypt)
     # Register first user
-    result1 = repo.register("bob", "bob@example.com", "hunter2")
+    result1 = repo.register("bob", "bob@example.com", "hunter22")
     assert result1.is_ok
 
     # Try to register with same email
     result2 = repo.register("alice", "bob@example.com", "password")
     assert result2.is_err
     error = result2.unwrap_err()
-    assert isinstance(error, UsernameTaken)
+    assert isinstance(error, EmailTaken)
 
 
 def test_find_by_username_or_email_sql(db, bcrypt):
     """Test finding user by username or email with SQL repository."""
     repo = SQLUserRepository(bcrypt=bcrypt)
-    result = repo.register("bob", "bob@example.com", "hunter2")
+    result = repo.register("bob", "bob@example.com", "hunter22")
     assert result.is_ok
 
     fetched = repo.find_by_username_or_email("bob")
@@ -96,13 +101,13 @@ def test_find_by_username_or_email_sql(db, bcrypt):
 def test_load_for_auth_sql(db, bcrypt):
     """Test loading user with password hash for authentication with SQL repository."""
     repo = SQLUserRepository(bcrypt=bcrypt)
-    result = repo.register("bob", "bob@example.com", "hunter2")
+    result = repo.register("bob", "bob@example.com", "hunter22")
     assert result.is_ok
 
     fetched = repo.load_for_auth("bob")
     assert fetched and fetched.username == "bob"
     assert fetched.email == "bob@example.com"
-    assert repo.verify_password(fetched, "hunter2")
+    assert repo.verify_password(fetched, "hunter22")
 
 
 def test_first_user_is_admin_sql(db, bcrypt):
@@ -112,7 +117,7 @@ def test_first_user_is_admin_sql(db, bcrypt):
     for user in users:
         repo.delete(user.username)
 
-    result = repo.register("bob", "bob@example.com", "hunter2")
+    result = repo.register("bob", "bob@example.com", "hunter22")
     assert result.is_ok
     user = result.unwrap()
     assert user.is_admin
@@ -121,7 +126,7 @@ def test_first_user_is_admin_sql(db, bcrypt):
 def test_register_sql_valid_username_with_underscores_and_hyphens(db, bcrypt):
     """Test user registration succeeds with valid username containing underscores and hyphens."""
     repo = SQLUserRepository(bcrypt=bcrypt)
-    result = repo.register("bob_alice-123", "bob@example.com", "hunter2")
+    result = repo.register("bob_alice-123", "bob@example.com", "hunter22")
     assert result.is_ok
     user = result.unwrap()
     assert user.username == "bob_alice-123"
@@ -241,7 +246,7 @@ def test_register_in_memory_valid_username_with_underscores_and_hyphens(
 def test_register_sql_empty_username(db, bcrypt):
     """Test user registration fails with empty username."""
     repo = SQLUserRepository(bcrypt=bcrypt)
-    result = repo.register("", "bob@example.com", "hunter2")
+    result = repo.register("", "bob@example.com", "hunter22")
     assert result.is_err
     error = result.unwrap_err()
     assert isinstance(error, InvalidUsername)
@@ -250,7 +255,7 @@ def test_register_sql_empty_username(db, bcrypt):
 def test_register_sql_empty_email(db, bcrypt):
     """Test user registration fails with empty email."""
     repo = SQLUserRepository(bcrypt=bcrypt)
-    result = repo.register("bob", "", "hunter2")
+    result = repo.register("bob", "", "hunter22")
     assert result.is_err
     error = result.unwrap_err()
     assert isinstance(error, InvalidEmail)
