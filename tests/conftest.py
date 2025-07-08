@@ -53,7 +53,7 @@ def db(app, bcrypt, test_admin):
     )
 
     with app.app_context():
-        init_db(bcrypt)
+        init_db()
         create_test_admin(
             bcrypt,
             test_admin["username"],

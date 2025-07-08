@@ -72,5 +72,5 @@ def create_app(config_class=Config):
 def init_db_command():
     from src.infra.db import init_db
 
-    init_db(bcrypt)
+    init_db()
     click.echo("Initialized the database.")

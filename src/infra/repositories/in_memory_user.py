@@ -11,13 +11,28 @@ from src.core.user import User
 
 
 class InMemoryUserRepository(UserRepository):
+    """In-memory implementation of UserRepository that stores users in memory and uses Flask-Bcrypt for password hashing."""
+
     _current_id = 1
 
     def __init__(self, bcrypt: Bcrypt):
+        """Initialize the in-memory user repository.
+
+        Args:
+            bcrypt (Bcrypt): The Flask-Bcrypt instance for hashing passwords.
+        """
         self.bcrypt = bcrypt
         self.users: dict[str, User] = {}
 
     def find_by_username(self, username: str) -> User | None:
+        """Find a user by username.
+
+        Args:
+            username (str): The username to search for.
+
+        Returns:
+            User | None: The User object if found, otherwise None.
+        """
         result = self.users.get(username)
         if result is None:
             return None
@@ -30,6 +45,14 @@ class InMemoryUserRepository(UserRepository):
         )
 
     def find_by_username_or_email(self, username_or_email: str) -> User | None:
+        """Find a user by username or email.
+
+        Args:
+            username_or_email (str): The username or email to search for.
+
+        Returns:
+            User | None: The User object if a match is found, otherwise None.
+        """
         for user in self.users.values():
             if (
                 user.username == username_or_email
@@ -43,6 +66,14 @@ class InMemoryUserRepository(UserRepository):
                 )
 
     def load_for_auth(self, username_or_email: str) -> User | None:
+        """Load a user with password hash for authentication.
+
+        Args:
+            username_or_email (str): The username or email of the user.
+
+        Returns:
+            User | None: The User object with pw_hash if found, otherwise None.
+        """
         for user in self.users.values():
             if (
                 user.username == username_or_email
@@ -51,19 +82,51 @@ class InMemoryUserRepository(UserRepository):
                 return user
 
     def verify_password(self, user: User, password: str) -> bool:
+        """Verify a user's password against the stored hash.
+
+        Args:
+            user (User): The user whose password is to be verified.
+            password (str): The plaintext password to verify.
+
+        Returns:
+            bool: True if the password matches, False otherwise.
+        """
         return self.bcrypt.check_password_hash(user.pw_hash, password)
 
     def get_by_id(self, user_id: int) -> User | None:
+        """Retrieve a user by their ID.
+
+        Args:
+            user_id (int): The ID of the user.
+
+        Returns:
+            User | None: The User object if found, otherwise None.
+        """
         for user in self.users.values():
             if user.id == user_id:
                 return user
 
     def list_all(self) -> list[User]:
+        """List all users in the repository.
+
+        Returns:
+            list[User]: A list of all users.
+        """
         return list(self.users.values())
 
     def register(
         self, username: str, email: str, password: str
     ) -> Result[User, RepositoryError]:
+        """Register a new user in the repository.
+
+        Args:
+            username (str): The desired username.
+            email (str): The user's email address.
+            password (str): The plaintext password.
+
+        Returns:
+            Result[User, RepositoryError]: Ok(User) if registration succeeds, Err if it fails.
+        """
         if username in self.users:
             return Result.Err(UsernameTaken(username))
 
@@ -86,6 +149,14 @@ class InMemoryUserRepository(UserRepository):
         return Result.Ok(user)
 
     def delete(self, username_or_email: str) -> None | DomainError:
+        """Delete a user by username or email.
+
+        Args:
+            username_or_email (str): The username or email of the user to delete.
+
+        Returns:
+            None | DomainError: None if deletion is successful, UserNotFoundError if the user is not found.
+        """
         user = self.find_by_username_or_email(username_or_email)
         if user is None:
             return UserNotFoundError(username_or_email)

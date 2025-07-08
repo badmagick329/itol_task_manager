@@ -1,10 +1,8 @@
 from sqlite3 import Connection, IntegrityError
 
 from src.core.errors import (
-    DomainError,
     InfrastructureError,
     TaskNotFoundError,
-    ValidationError,
 )
 from src.core.ports.task_repository import RepositoryError, TaskRepository
 from src.core.result import Result
