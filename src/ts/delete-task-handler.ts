@@ -1,3 +1,8 @@
+/**
+ * setupDeleteTaskHandler sets up the event listeners for delete task buttons.
+ *
+ * @returns {void}
+ */
 export function setupDeleteTaskHandler() {
   const deleteButtons = document.querySelectorAll('[data-delete-task-id]');
   if (deleteButtons.length === 0) return;

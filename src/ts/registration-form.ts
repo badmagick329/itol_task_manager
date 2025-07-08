@@ -1,5 +1,10 @@
 import { FormListener, ValidationHelpers } from './form-listener';
 
+/**
+ * setupRegistrationForm sets up the registration form with validation and submission handling.
+ *
+ * @returns {void}
+ */
 export function setupRegistrationForm() {
   const formId = 'registration-form';
   if (!FormListener.formExists(formId)) return;

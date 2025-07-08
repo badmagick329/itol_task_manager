@@ -1,5 +1,10 @@
 import { FormListener, ValidationHelpers } from './form-listener';
 
+/**
+ * setupCreateTaskForm sets up the create task form with validation and submission handling.
+ *
+ * @returns {void}
+ */
 export function setupCreateTaskForm() {
   const formId = 'create-task-form';
   if (!FormListener.formExists(formId)) return;
