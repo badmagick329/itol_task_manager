@@ -62,6 +62,11 @@ content %}
       </div>
       {% endfor %}
     </div>
+    <div class="ml-auto">
+      <a href="{{ url_for('task.export_tasks') }}">
+        <button class="btn-primary">Export Tasks</button>
+      </a>
+    </div>
     {% if not tasks %}
     <div class="flex w-full flex-col justify-center">
       <h1 class="text-foreground/80 text-center text-2xl">
