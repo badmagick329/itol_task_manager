@@ -1,5 +1,6 @@
 from flask import (
     Blueprint,
+    Response,
     current_app,
     redirect,
     render_template,
@@ -155,4 +156,35 @@ def task_delete(task_id: int):
         status=200,
         redirect=url_for("task.dashboard"),
         message="Task deleted successfully",
+    )
+
+
+@task_bp.route("/task/export", methods=["GET"])
+@login_required
+def export_tasks():
+    """
+    Export the current user's tasks as a downloadable CSV file.
+    """
+    user_id = current_user.id if current_user.is_authenticated else None
+    if not user_id:
+        return redirect(url_for("auth.login"))
+
+    export_service = current_app.extensions["task_export_service"]
+    api_response_service: ApiResponseService = current_app.extensions[
+        "api_response_service"
+    ]
+    result = export_service.export_user_tasks(user_id)
+    if result.is_err:
+        return api_response_service.to_response(
+            ok=False,
+            status=500,
+            message="Task export failed",
+            error=str(result.unwrap_err()),
+        )
+
+    csv_content = result.unwrap()
+    return Response(
+        csv_content,
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment; filename=tasks.csv"},
     )

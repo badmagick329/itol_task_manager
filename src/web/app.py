@@ -13,6 +13,7 @@ from src.infra.repositories.sql_task_repository import SQLTaskRepository
 from src.infra.repositories.sql_user_repository import SQLUserRepository
 from src.services.account_service import AccountService
 from src.services.api_response_service import ApiResponseService
+from src.services.task_export_service import TaskExportService
 
 bcrypt = Bcrypt()
 login_manager = LoginManager()
@@ -44,10 +45,11 @@ def create_app(config_class=Config):
     # ports and services
     user_repo = SQLUserRepository(bcrypt=bcrypt)
     task_repo = SQLTaskRepository()
-    account_service = AccountService(user_repo)
-    app.extensions["account_service"] = account_service
     app.extensions["user_repo"] = user_repo
     app.extensions["task_repo"] = task_repo
+
+    app.extensions["account_service"] = AccountService(user_repo)
+    app.extensions["task_export_service"] = TaskExportService(task_repo)
     app.extensions["api_response_service"] = ApiResponseService()
 
     # user loader
