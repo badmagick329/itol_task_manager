@@ -7,6 +7,10 @@ export function setupDeleteTaskHandler() {
       event.preventDefault();
       const taskId = (button as HTMLElement).dataset.deleteTaskId;
       if (!taskId) return;
+      const confirm = window.confirm(
+        'Are you sure you want to delete this task?'
+      );
+      if (!confirm) return;
 
       const response = await fetch(`/task/${taskId}`, {
         method: 'DELETE',
