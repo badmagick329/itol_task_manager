@@ -1,20 +1,29 @@
 {% extends 'base.html' %} {% block title %}Dashboard{% endblock %} {% block
 content %}
-<div class="container mx-auto pt-16">
+<div class="container mx-auto px-2 pt-16">
   <div class="flex flex-col gap-4">
+    <h1 class="mb-2 text-center text-4xl font-bold">Task Dashboard</h1>
+    <div>
+      <a href="/task">
+        <button class="btn-primary" tabindex="-1">Add new task</button>
+      </a>
+    </div>
     {% for task in tasks %}
     <div class="border-border rounded border p-4">
-      <a href="/task/{{ task.id }}">
-        <h3 class="text-lg font-semibold">{{ task.title }}</h3>
-        <p class="text-foreground/80">{{ task.description }}</p>
-      </a>
-      <button
-        class="btn-danger mt-2"
-        type="button"
-        data-delete-task-id="{{ task.id }}"
-      >
-        Delete
-      </button>
+      <h3 class="text-lg font-semibold">{{ task.title }}</h3>
+      <p class="text-foreground/80">{{ task.description }}</p>
+      <div class="mt-2 flex items-center justify-between">
+        <a href="/task/{{ task.id }}">
+          <button class="btn-warning" tabindex="-1">Edit</button>
+        </a>
+        <button
+          class="btn-danger"
+          type="button"
+          data-delete-task-id="{{ task.id }}"
+        >
+          Delete
+        </button>
+      </div>
     </div>
     {% endfor %} {% if not tasks %}
     <div class="border-border rounded border p-4">
