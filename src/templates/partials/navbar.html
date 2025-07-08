@@ -1,7 +1,37 @@
-<nav class="bg-background-light px-4 py-4">
+<nav class="bg-secondary text-lg font-semibold">
   <ul class="flex justify-between gap-2">
-    <li>Item 1</li>
-    <li>Item 2</li>
-    <li>Item 3</li>
+    {% if current_user.is_authenticated %}
+    <li>
+      <a
+        class="flex items-center gap-2 py-2 pr-6 pl-4 hover:bg-white/8"
+        href="{{ url_for('task.dashboard') }}"
+        tabindex="1"
+      >
+        <img src="/static/images/logo_sm.png" />
+        <p>Home</p>
+      </a>
+    </li>
+
+    <li>
+      <a
+        class="flex h-full items-center justify-center gap-2 px-6 hover:bg-white/8"
+        href="{{ url_for('auth.logout') }}"
+        tabindex="2"
+      >
+        <p>Logout</p>
+      </a>
+    </li>
+    {% else %}
+    <li>
+      <a
+        class="flex items-center gap-2 py-2 pr-6 pl-4 hover:bg-white/8"
+        href="{{ url_for('task.dashboard') }}"
+        tabindex="1"
+      >
+        <img src="/static/images/logo_sm.png" />
+        <p>Home</p>
+      </a>
+    </li>
+    {% endif %}
   </ul>
 </nav>

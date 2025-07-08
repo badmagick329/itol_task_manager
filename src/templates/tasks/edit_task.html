@@ -1,6 +1,7 @@
 {% extends 'base.html' %} {% block title %}Create Task{% endblock %} {% block
 content %}
 <div class="container mx-auto pt-16">
+  <h1 class="mb-6 text-center text-4xl font-bold">Edit Task</h1>
   <form
     id="edit-task-form"
     class="mb-4 flex flex-col items-center gap-4 px-2"
@@ -23,7 +24,7 @@ content %}
 {{ task.description }}</textarea
     >
     <input
-      class="form-input"
+      class="form-input scheme-dark"
       type="date"
       placeholder="Enter due date"
       autocomplete="off"
@@ -68,7 +69,14 @@ content %}
         Done
       </option>
     </select>
-    <button class="btn-primary" type="submit">Edit Task</button>
+    <div class="flex w-full justify-between">
+      <a href="/dashboard">
+        <button class="btn-outline" tabindex="-1">
+          Back
+        </button>
+      </a>
+      <button class="btn-primary" type="submit">Edit Task</button>
+    </div>
   </form>
   <div id="edit-task-error" class="mb-4 hidden justify-center">
     <p id="edit-task-error-message" class="error-message"></p>
