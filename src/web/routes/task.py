@@ -33,7 +33,12 @@ def dashboard():
     if not user:
         return redirect(url_for("auth.login"))
 
-    tasks = task_repository.list_by_user(user.id)
+    title = request.args.get("title", "").strip() or None
+    description = request.args.get("description", "").strip() or None
+
+    tasks = task_repository.search(
+        user.id, title=title, description=description
+    )
 
     return render_template("tasks/dashboard.html", tasks=tasks)
 

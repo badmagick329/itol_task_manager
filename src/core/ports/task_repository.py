@@ -44,3 +44,11 @@ class TaskRepository(ABC):
 
     @abstractmethod
     def delete(self, task_id: int) -> None | DomainError: ...
+
+    @abstractmethod
+    def search(
+        self,
+        user_id: int,
+        title: str | None = None,
+        description: str | None = None,
+    ) -> list[Task]: ...
