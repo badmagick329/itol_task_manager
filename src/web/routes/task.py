@@ -96,7 +96,6 @@ def task_edit(task_id: int):
 @task_bp.route("/task/<int:task_id>", methods=["PUT"])
 @login_required
 def task_update(task_id: int):
-    print("PUT CALLED")
     task_repository: SQLTaskRepository = current_app.extensions["task_repo"]
     api_response_service: ApiResponseService = current_app.extensions[
         "api_response_service"
