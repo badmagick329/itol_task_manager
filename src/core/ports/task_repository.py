@@ -22,10 +22,25 @@ class TaskRepository(ABC):
     def list_by_user(self, user_id: int) -> list[Task]: ...
 
     @abstractmethod
-    def create(self, task: Task) -> Result[Task, RepositoryError]: ...
+    def create(
+        self,
+        title: str,
+        description: str,
+        due_date: str,
+        status: str,
+        user_id: int,
+    ) -> Result[Task, RepositoryError]: ...
 
     @abstractmethod
-    def update(self, task: Task) -> Result[Task, RepositoryError]: ...
+    def update(
+        self,
+        task_id: int,
+        title: str,
+        description: str,
+        due_date: str,
+        status: str,
+        user_id: int,
+    ) -> Result[Task, RepositoryError]: ...
 
     @abstractmethod
     def delete(self, task_id: int) -> None | DomainError: ...

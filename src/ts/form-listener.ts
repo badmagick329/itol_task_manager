@@ -5,7 +5,7 @@ type FormListenerArgs = {
   errorBoxId: string;
   errorMessageId: string;
   endpoint: string;
-  method?: string;
+  method?: 'POST' | 'PUT';
 };
 
 export class FormListener {
@@ -14,8 +14,8 @@ export class FormListener {
   private errorBox: HTMLElement;
   private errorMessage: HTMLElement;
 
-  private endpoint: string;
-  private method: string = 'POST';
+  private _endpoint: string;
+  private method: 'POST' | 'PUT' = 'POST';
 
   constructor({
     formId,
@@ -35,7 +35,7 @@ export class FormListener {
     this.formId = formId;
     this.errorBox = errorBox;
     this.errorMessage = errorMessage;
-    this.endpoint = endpoint;
+    this._endpoint = endpoint;
     if (method) {
       this.method = method;
     }
@@ -97,6 +97,14 @@ export class FormListener {
 
   addValidator(validator: (data: Record<string, string>) => string) {
     this.validators.push(validator);
+  }
+
+  get endpoint(): string {
+    if (this.method === 'POST') {
+      return this._endpoint;
+    }
+    const parts = window.location.href.split('/');
+    return `${this._endpoint}/${parts[parts.length - 1]}`;
   }
 
   private showError(message: string) {

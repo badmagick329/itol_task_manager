@@ -9,6 +9,7 @@ import click
 
 from src.config import Config
 from src.infra.repositories.in_memory_user import InMemoryUserRepository
+from src.infra.repositories.sql_task_repository import SQLTaskRepository
 from src.infra.repositories.sql_user_repository import SQLUserRepository
 from src.services.account_service import AccountService
 from src.services.api_response_service import ApiResponseService
@@ -42,9 +43,11 @@ def create_app(config_class=Config):
 
     # ports and services
     user_repo = SQLUserRepository(bcrypt=bcrypt)
+    task_repo = SQLTaskRepository()
     account_service = AccountService(user_repo)
     app.extensions["account_service"] = account_service
     app.extensions["user_repo"] = user_repo
+    app.extensions["task_repo"] = task_repo
     app.extensions["api_response_service"] = ApiResponseService()
 
     # user loader
@@ -55,9 +58,11 @@ def create_app(config_class=Config):
     # register blueprints
     from src.web.routes.auth import auth_bp
     from src.web.routes.main import main_bp
+    from src.web.routes.task import task_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(task_bp)
 
     return app
 

@@ -1,0 +1,43 @@
+{% extends 'base.html' %} {% block title %}Create Task{% endblock %} {% block
+content %}
+<div class="container mx-auto pt-16">
+  <form
+    id="create-task-form"
+    class="mb-4 flex flex-col items-center gap-4 px-2"
+  >
+    <input
+      class="form-input"
+      type="text"
+      placeholder="Enter task title"
+      autocomplete="off"
+      name="title"
+    />
+    <textarea
+      class="form-input"
+      placeholder="Enter task description"
+      autocomplete="off"
+      rows="4"
+      name="description"
+    ></textarea>
+    <input
+      class="form-input"
+      type="date"
+      placeholder="Enter due date"
+      autocomplete="off"
+      name="due_date"
+    />
+    <select class="form-input" name="status">
+      <option value="To Do" class="bg-background-light">To Do</option>
+      <option value="In Progress" class="bg-background-light">
+        In Progress
+      </option>
+      <option value="Done" class="bg-background-light">Done</option>
+    </select>
+    <button class="btn-primary" type="submit">Create Task</button>
+  </form>
+  <div id="create-task-error" class="mb-4 hidden justify-center">
+    <p id="create-task-error-message" class="error-message"></p>
+  </div>
+</div>
+
+{% endblock content %}

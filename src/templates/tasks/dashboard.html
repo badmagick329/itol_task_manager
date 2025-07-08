@@ -1,0 +1,26 @@
+{% extends 'base.html' %} {% block title %}Dashboard{% endblock %} {% block
+content %}
+<div class="container mx-auto pt-16">
+  <div class="flex flex-col gap-4">
+    {% for task in tasks %}
+    <div class="border-border rounded border p-4">
+      <a href="/task/{{ task.id }}">
+        <h3 class="text-lg font-semibold">{{ task.title }}</h3>
+        <p class="text-foreground/80">{{ task.description }}</p>
+      </a>
+      <button
+        class="btn-danger mt-2"
+        type="button"
+        data-delete-task-id="{{ task.id }}"
+      >
+        Delete
+      </button>
+    </div>
+    {% endfor %} {% if not tasks %}
+    <div class="border-border rounded border p-4">
+      <p class="text-foreground/80">No tasks available.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}
