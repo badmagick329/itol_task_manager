@@ -3,15 +3,31 @@ content %}
 <div class="container mx-auto px-2 pt-16">
   <div class="flex flex-col gap-4">
     <h1 class="mb-2 text-center text-4xl font-bold">Task Dashboard</h1>
-    <div>
+    <div class="flex justify-between">
       <a href="/task">
         <button class="btn-primary" tabindex="-1">Add new task</button>
       </a>
+      <div>
+        <select id="task-status-filter" class="form-input">
+          <option value="All" class="bg-background-light">All</option>
+          <option value="To Do" class="bg-background-light">To Do</option>
+          <option value="In Progress" class="bg-background-light">
+            In Progress
+          </option>
+          <option value="Completed" class="bg-background-light">
+            Completed
+          </option>
+        </select>
+      </div>
     </div>
     {% for task in tasks %}
-    <div class="border-border rounded border p-4">
+    <div
+      class="border-border flex flex-col rounded border p-4"
+      data-task-status="{{ task.status }}"
+    >
       <h3 class="text-lg font-semibold">{{ task.title }}</h3>
       <p class="text-foreground/80">{{ task.description }}</p>
+      <p>Status: {{ task.status }}</p>
       <div class="mt-2 flex items-center justify-between">
         <a href="/task/{{ task.id }}">
           <button class="btn-warning" tabindex="-1">Edit</button>
