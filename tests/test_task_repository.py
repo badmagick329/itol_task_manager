@@ -1,6 +1,6 @@
 from datetime import date
 
-from src.core.errors import InfrastructureError, ValidationError
+from src.core.errors import ValidationError
 from src.core.task import Task
 from src.infra.repositories.sql_task_repository import SQLTaskRepository
 from src.infra.repositories.sql_user_repository import SQLUserRepository
@@ -15,15 +15,11 @@ def test_create_and_get_task(db, bcrypt, test_admin):
 
     repo = SQLTaskRepository()
 
-    task = Task(
-        id=0,
-        title="Test Task",
-        description="A description",
-        due_date=str(date.today()),
-        status="To Do",
-        user_id=int(user.id),
-    )
-    result = repo.create(task)
+    title = "Test Task"
+    description = "A description"
+    due = str(date.today())
+    status = "To Do"
+    result = repo.create(title, description, due, status, int(user.id))
     assert result.is_ok, f"Error creating task: {result.unwrap_err()}"
     created = result.unwrap()
     assert isinstance(created, Task)
@@ -45,11 +41,9 @@ def test_list_all_and_list_by_user(db, bcrypt, test_admin):
     conn.execute("DELETE FROM tasks;")
     conn.commit()
 
-    t1 = repo.create(
-        Task(0, "T1", "", str(date.today()), "To Do", user.id)
-    ).unwrap()
+    t1 = repo.create("T1", "", str(date.today()), "To Do", user.id).unwrap()
     t2 = repo.create(
-        Task(0, "T2", "", str(date.today()), "In Progress", user.id)
+        "T2", "", str(date.today()), "In Progress", user.id
     ).unwrap()
 
     all_tasks = repo.list_all()
@@ -69,14 +63,20 @@ def test_update_task(db, bcrypt, test_admin):
     assert user is not None
     repo = SQLTaskRepository()
 
-    # create task
     t = repo.create(
-        Task(0, "Old", "Desc", str(date.today()), "To Do", user.id)
+        "Old", "Desc", str(date.today()), "To Do", user.id
     ).unwrap()
     # update fields
     t.title = "Updated"
     t.status = "Completed"
-    result = repo.update(t)
+    result = repo.update(
+        task_id=t.id,
+        title=t.title,
+        description=t.description,
+        due_date=t.due_date,
+        status=t.status,
+        user_id=user.id,
+    )
     assert result.is_ok, f"Error updating: {result.unwrap_err()}"
     updated = result.unwrap()
     assert updated.title == "Updated"
@@ -90,9 +90,7 @@ def test_delete_task(db, bcrypt, test_admin):
     assert user is not None
     repo = SQLTaskRepository()
 
-    t = repo.create(
-        Task(0, "Tmp", "", str(date.today()), "To Do", user.id)
-    ).unwrap()
+    t = repo.create("Tmp", "", str(date.today()), "To Do", user.id).unwrap()
 
     err = repo.delete(t.id)
     assert err is None
@@ -100,44 +98,48 @@ def test_delete_task(db, bcrypt, test_admin):
 
 
 def test_create_task_invalid_status(db, bcrypt, test_admin):
-    """Invalid status should raise InfrastructureError due to SQL CHECK."""
+    """Invalid status should raise ValidationError due to domain validation."""
     user_repo = SQLUserRepository(bcrypt=bcrypt)
     user = user_repo.find_by_username(test_admin["username"])
     assert user is not None
     repo = SQLTaskRepository()
 
-    bad = Task(0, "Bad", "", str(date.today()), "Not a Status", user.id)
-    result = repo.create(bad)
+    result = repo.create("Bad", "", str(date.today()), "Not a Status", user.id)
     assert result.is_err
-    assert isinstance(result.unwrap_err(), InfrastructureError)
+    err = result.unwrap_err()
+    assert isinstance(err, ValidationError)
 
 
 def test_create_task_title_length(db, bcrypt, test_admin):
-    """Title longer than 100 chars should error."""
+    """Title longer than 100 chars should raise ValidationError due to domain validation."""
     user_repo = SQLUserRepository(bcrypt=bcrypt)
     user = user_repo.find_by_username(test_admin["username"])
     assert user is not None
     repo = SQLTaskRepository()
 
     long_title = "x" * 101
-    bad = Task(0, long_title, "", str(date.today()), "To Do", user.id)
-    result = repo.create(bad)
+    # long title via signature
+    result = repo.create(long_title, "", str(date.today()), "To Do", user.id)
     assert result.is_err
-    assert isinstance(result.unwrap_err(), InfrastructureError)
+    err = result.unwrap_err()
+    assert isinstance(err, ValidationError)
 
 
 def test_create_task_description_length(db, bcrypt, test_admin):
-    """Description longer than 500 chars should error."""
+    """Description longer than 500 chars should raise ValidationError due to domain validation."""
     user_repo = SQLUserRepository(bcrypt=bcrypt)
     user = user_repo.find_by_username(test_admin["username"])
     assert user is not None
     repo = SQLTaskRepository()
 
     long_desc = "x" * 501
-    bad = Task(0, "DescTest", long_desc, str(date.today()), "To Do", user.id)
-    result = repo.create(bad)
+
+    result = repo.create(
+        "DescTest", long_desc, str(date.today()), "To Do", user.id
+    )
     assert result.is_err
-    assert isinstance(result.unwrap_err(), InfrastructureError)
+    err = result.unwrap_err()
+    assert isinstance(err, ValidationError)
 
 
 # Domain-level validation tests for Task.create

@@ -1,0 +1,78 @@
+{% extends 'base.html' %} {% block title %}Create Task{% endblock %} {% block
+content %}
+<div class="container mx-auto pt-16">
+  <form
+    id="edit-task-form"
+    class="mb-4 flex flex-col items-center gap-4 px-2"
+  >
+    <input
+      class="form-input"
+      type="text"
+      placeholder="Enter task title"
+      autocomplete="off"
+      name="title"
+      value="{{ task.title }}"
+    />
+    <textarea
+      class="form-input"
+      placeholder="Enter task description"
+      autocomplete="off"
+      rows="4"
+      name="description"
+    >
+{{ task.description }}</textarea
+    >
+    <input
+      class="form-input"
+      type="date"
+      placeholder="Enter due date"
+      autocomplete="off"
+      name="due_date"
+      value="{{ task.due_date }}"
+    />
+    <select class="form-input" name="status">
+      <option
+        value="To Do"
+        class="bg-background-light"
+        {%
+        if
+        task.status=="To Do"
+        %}selected{%
+        endif
+        %}
+      >
+        To Do
+      </option>
+      <option
+        value="In Progress"
+        class="bg-background-light"
+        {%
+        if
+        task.status=="In Progress"
+        %}selected{%
+        endif
+        %}
+      >
+        In Progress
+      </option>
+      <option
+        value="Done"
+        class="bg-background-light"
+        {%
+        if
+        task.status=="Done"
+        %}selected{%
+        endif
+        %}
+      >
+        Done
+      </option>
+    </select>
+    <button class="btn-primary" type="submit">Edit Task</button>
+  </form>
+  <div id="edit-task-error" class="mb-4 hidden justify-center">
+    <p id="edit-task-error-message" class="error-message"></p>
+  </div>
+</div>
+
+{% endblock content %}

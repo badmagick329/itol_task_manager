@@ -90,14 +90,37 @@ class SQLTaskRepository(TaskRepository):
             tasks.append(task)
         return tasks
 
-    def create(self, task: Task) -> Result[Task, RepositoryError]:
+    def create(
+        self,
+        title: str,
+        description: str,
+        due_date: str,
+        status: str,
+        user_id: int,
+    ) -> Result[Task, RepositoryError]:
         """Creates a new task in the repository.
 
         Args:
-            task (Task): The task to create.
+            title (str): The title of the task.
+            description (str): The description of the task.
+            due_date (str): The due date of the task.
+            status (str): The status of the task.
+            user_id (int): The ID of the user who owns the task.
 
         Returns:
             Result[Task, RepositoryError]: The created task or an error if creation failed."""
+        created_task_result = Task.create(
+            id=0,  # ID will be assigned by the database
+            title=title,
+            description=description,
+            due_date=due_date,
+            status=status,
+            user_id=user_id,
+        )
+        if created_task_result.is_err:
+            return Result.Err(created_task_result.unwrap_err())
+        task = created_task_result.unwrap()
+
         conn = self._get_connection()
         try:
             cur = conn.execute(
@@ -125,15 +148,42 @@ class SQLTaskRepository(TaskRepository):
         except IntegrityError as e:
             return Result.Err(InfrastructureError(str(e)))
 
-    def update(self, task: Task) -> Result[Task, RepositoryError]:
+    def update(
+        self,
+        task_id: int,
+        title: str,
+        description: str,
+        due_date: str,
+        status: str,
+        user_id: int,
+    ) -> Result[Task, RepositoryError]:
         """Updates an existing task in the repository.
 
         Args:
-            task (Task): The task to update.
+            task_id (int): The ID of the task to update.
+            title (str): The new title of the task.
+            description (str): The new description of the task.
+            due_date (str): The new due date of the task.
+            status (str): The new status of the task.
+            user_id (int): The ID of the user who owns the task.
 
         Returns:
             Result[Task, RepositoryError]: The updated task or an error if the update failed.
         """
+
+        created_task_result = Task.create(
+            id=task_id,
+            title=title,
+            description=description,
+            due_date=due_date,
+            status=status,
+            user_id=user_id,
+        )
+        if created_task_result.is_err:
+            return Result.Err(created_task_result.unwrap_err())
+
+        task = created_task_result.unwrap()
+
         conn = self._get_connection()
         try:
             cur = conn.execute(
