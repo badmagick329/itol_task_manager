@@ -1,3 +1,7 @@
+"""
+Entry point for the Flask application. Loads environment variables and starts the Flask server.
+"""
+
 from pathlib import Path
 
 import os

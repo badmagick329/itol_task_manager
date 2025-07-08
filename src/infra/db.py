@@ -5,6 +5,11 @@ from flask_bcrypt import Bcrypt
 
 
 def get_connection():
+    """Get a database connection from the Flask application context.
+
+    Returns:
+        sqlite3.Connection: The database connection.
+    """
     if "db" not in g:
         g.db = sqlite3.connect(
             current_app.config["DATABASE"], check_same_thread=True
@@ -22,16 +27,30 @@ def get_connection():
 
 
 def close_db(e=None):
+    """Close the database connection if it exists in the Flask application context.
+
+    Args:
+        e (Exception, optional): An exception that may have occurred. Defaults to None.
+    """
     db = g.pop("db", None)
     if db is not None:
         db.close()
 
 
 def init_db_teardown_handler(app):
+    """Register a teardown handler to close the database connection.
+
+    Args:
+        app (Flask): The Flask application instance.
+    """
     app.teardown_appcontext(close_db)
 
 
-def init_db(bcrypt: Bcrypt):
+def init_db():
+    """
+    Initialize the database by creating necessary tables. This will typically be called with the Flask CLI
+    command `flask init-db`.
+    """
     conn = get_connection()
     conn.execute("PRAGMA foreign_keys = ON;")
     conn.execute("PRAGMA journal_mode = WAL;")
