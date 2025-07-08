@@ -1,5 +1,10 @@
 import { FormListener, ValidationHelpers } from './form-listener';
 
+/**
+ * setupLoginForm sets up the login form with validation and submission handling.
+ *
+ * @returns {void}
+ */
 export function setupLoginForm() {
   const formId = 'login-form';
   if (!FormListener.formExists(formId)) return;

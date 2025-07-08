@@ -5,6 +5,9 @@ import { setupEditTaskForm } from './edit-task-form';
 import { setupLoginForm } from './login-form';
 import { setupRegistrationForm } from './registration-form';
 
+/**
+ * Main function to initialize the client side code
+ */
 async function main() {
   console.log('🤓');
   setupLoginForm();

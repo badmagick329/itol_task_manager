@@ -1,5 +1,10 @@
 import { FormListener, ValidationHelpers } from './form-listener';
 
+/**
+ * setupEditTaskForm sets up the edit task form with validation and submission handling.
+ *
+ * @returns {void}
+ */
 export function setupEditTaskForm() {
   const formId = 'edit-task-form';
   if (!FormListener.formExists(formId)) return;

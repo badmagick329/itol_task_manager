@@ -8,6 +8,10 @@ type FormListenerArgs = {
   method?: 'POST' | 'PUT';
 };
 
+/**
+ * FormListener handles form submission, validation, and error display.
+ * It can be used for both POST and PUT requests.
+ */
 export class FormListener {
   private formId: string;
   private validators: ((data: Record<string, string>) => string)[] = [];
@@ -17,6 +21,11 @@ export class FormListener {
   private _endpoint: string;
   private method: 'POST' | 'PUT' = 'POST';
 
+  /**
+   * Constructs a FormListener instance.
+   *
+   * @param {FormListenerArgs} args - The arguments for the FormListener.
+   */
   constructor({
     formId,
     errorBoxId,
@@ -41,11 +50,26 @@ export class FormListener {
     }
   }
 
+  /**
+   * Checks if a form exists in the DOM.
+   *
+   * @param {string} formId - The ID of the form to check.
+   * @returns {boolean} - True if the form exists, false otherwise.
+   */
   static formExists(formId: string) {
     const form = document.getElementById(formId);
     return form !== null && form instanceof HTMLFormElement;
   }
 
+  /**
+   * Tries to attach the form submission handler. If the form does not exist, it does nothing.
+   *
+   * This method adds a listener which listens for the form's submit event,
+   * validates the input data, sends the data to the server, and handles the
+   * response.
+   *
+   * @returns {void}
+   */
   tryAttach() {
     const form = document.getElementById(this.formId) as HTMLFormElement | null;
 
@@ -95,10 +119,26 @@ export class FormListener {
     });
   }
 
+  /**
+   * Adds a validation function to the list of validators.
+   *
+   * @param {function} validator - A function that takes data and returns an
+   * error message if validation fails.
+   *
+   * @returns {void}
+   */
   addValidator(validator: (data: Record<string, string>) => string) {
     this.validators.push(validator);
   }
 
+  /**
+   * Gets the endpoint URL based on the method.
+   * If the method is POST, it returns the base endpoint.
+   * If the method is PUT, it appends the last part of the current URL, which is
+   * assumed to be an ID, to the endpoint.
+   *
+   * @returns {string} - The endpoint URL.
+   */
   get endpoint(): string {
     if (this.method === 'POST') {
       return this._endpoint;
@@ -107,6 +147,11 @@ export class FormListener {
     return `${this._endpoint}/${parts[parts.length - 1]}`;
   }
 
+  /**
+   * Displays an error message in the error box.
+   *
+   * @returns {void}
+   */
   private showError(message: string) {
     if (!this.errorBox.classList.contains('flex')) {
       this.errorBox.classList.remove('hidden');
@@ -116,6 +161,11 @@ export class FormListener {
     this.errorMessage.textContent = message;
   }
 
+  /**
+   * Hides the error box if it is currently visible.
+   *
+   * @returns {void}
+   */
   private hideError() {
     if (this.errorBox.classList.contains('hidden')) return;
 
@@ -124,7 +174,16 @@ export class FormListener {
   }
 }
 
+/**
+ * ValidationHelpers provides a set of common validation functions that can be used with FormListener.
+ */
 export const ValidationHelpers = {
+  /**
+   * Creates a validation function that checks if a field is required.
+   *
+   * @param {string} fieldName - The name of the field to validate.
+   * @returns {function} - A validation function that returns an error message if the field is empty.
+   */
   required: (fieldName: string) => (data: Record<string, string>) => {
     if (!data[fieldName]) {
       return `${fieldName} cannot be empty`;
@@ -132,6 +191,14 @@ export const ValidationHelpers = {
     return '';
   },
 
+  /**
+   * Creates a validation function that checks if a field's value is at least a minimum length.
+   *
+   * @param {string} fieldName - The name of the field to validate.
+   * @param {number} minLen - The minimum length required.
+   *
+   * @returns {function} - A validation function that returns an error message if the field's value is too short.
+   */
   minLength:
     (fieldName: string, minLen: number) => (data: Record<string, string>) => {
       if (data[fieldName] && data[fieldName].length < minLen) {
@@ -140,6 +207,14 @@ export const ValidationHelpers = {
       return '';
     },
 
+  /**
+   * Creates a validation function that checks if a field's value matches a specific pattern.
+   * @param {string} fieldName - The name of the field to validate.
+   * @param {RegExp} regex - The regular expression to test against the field's value.
+   * @param {string} message - The error message to return if the validation fails.
+   *
+   * @return {function} - A validation function that returns an error message if the field's value does not match the pattern.
+   */
   pattern:
     (fieldName: string, regex: RegExp, message: string) =>
     (data: Record<string, string>) => {
@@ -149,6 +224,13 @@ export const ValidationHelpers = {
       return '';
     },
 
+  /**
+   * Creates a validation function that checks if two password fields match.
+   * @param {string} password1 - The name of the first password field.
+   * @param {string} password2 - The name of the second password field.
+   *
+   * @return {function} - A validation function that returns an error message if the passwords do not match.
+   */
   passwordMatch:
     (password1: string, password2: string) =>
     (data: Record<string, string>) => {
@@ -162,5 +244,11 @@ export const ValidationHelpers = {
       return '';
     },
 
+  /**
+   * Creates a custom validation function.
+   * This function allows you to define your own validation logic.
+   * @param {function} validator - A function that takes data and returns an error message if validation fails.
+   * @return {function} - A validation function that can be added to the FormListener.
+   */
   custom: (validator: (data: Record<string, string>) => string) => validator,
 };
