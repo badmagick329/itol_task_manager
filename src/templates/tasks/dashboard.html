@@ -32,20 +32,37 @@ content %}
     </form>
     <!-- SPACER -->
     <div class="border-foreground/60 mt-6 mb-2 h-[1px] border"></div>
-    <!-- NEW TASK AND FILTER BAR -->
-    <div class="flex justify-between">
+    <!-- NEW TASK, SORT AND FILTER BAR -->
+    <div class="flex flex-row flex-wrap items-center justify-between gap-4">
+      <!-- NEW TASK -->
       <a href="/task">
         <button class="btn-primary" tabindex="-1">Add new task</button>
       </a>
+      <!-- SORT -->
+      <div>
+        <select id="task-sorter" class="form-input">
+          <option value="" class="bg-background-light">Sort by</option>
+          <option value="title" class="bg-background-light">
+            Sort By Title
+          </option>
+          <option value="status" class="bg-background-light">
+            Sort By Status
+          </option>
+          <option value="due_date" class="bg-background-light">
+            Sort By Due Date
+          </option>
+        </select>
+      </div>
+      <!-- FILTER -->
       <div>
         <select id="task-status-filter" class="form-input">
-          <option value="All" class="bg-background-light">All</option>
-          <option value="To Do" class="bg-background-light">To Do</option>
+          <option value="All" class="bg-background-light">Show All</option>
+          <option value="To Do" class="bg-background-light">Show To Do</option>
           <option value="In Progress" class="bg-background-light">
-            In Progress
+            Show In Progress
           </option>
           <option value="Completed" class="bg-background-light">
-            Completed
+            Show Completed
           </option>
         </select>
       </div>
@@ -59,6 +76,8 @@ content %}
       <div
         class="border-border flex w-full max-w-xl min-w-xs flex-col justify-between rounded border"
         data-task-status="{{ task.status }}"
+        data-task-title="{{ task.title }}"
+        data-task-due-date="{{ task.due_date }}"
       >
         <div>
           <!-- HEADER -->
@@ -79,7 +98,7 @@ content %}
           </div>
         </div>
         <!-- FOOTER -->
-        <div class="flex items-center justify-between px-2 py-4">
+        <div class="flex items-center justify-between px-2 pt-8 pb-4">
           <a href="/task/{{ task.id }}">
             <button class="btn-outline" tabindex="-1">Edit</button>
           </a>
