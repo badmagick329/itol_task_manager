@@ -40,16 +40,8 @@ def login():
     return api_response_service.to_response(
         ok=True,
         status=200,
-        redirect=url_for("auth.protected"),
+        redirect=url_for("task.dashboard"),
         message="Login successful",
-    )
-
-
-@auth_bp.route("/protected")
-@login_required
-def protected():
-    return render_template(
-        "protected/home.html", username=current_user.username
     )
 
 
@@ -94,6 +86,15 @@ def register():
     return api_response_service.to_response(
         ok=True,
         status=201,
-        redirect=url_for("auth.protected"),
+        redirect=url_for("task.dashboard"),
         message="Registration successful",
+    )
+
+
+# TEST ROUTE
+@auth_bp.route("/protected")
+@login_required
+def protected():
+    return render_template(
+        "protected/home.html", username=current_user.username
     )
