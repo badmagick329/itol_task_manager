@@ -226,3 +226,44 @@ class SQLTaskRepository(TaskRepository):
 
     def _get_connection(self) -> Connection:
         return get_connection()
+
+    def search(
+        self,
+        user_id: int,
+        title: str | None = None,
+        description: str | None = None,
+    ) -> list[Task]:
+        """Searches for tasks by user_id, and optionally by title and/or description.
+
+        Args:
+            user_id (int): The ID of the user whose tasks to search.
+            title (str | None): Optional title substring to search for.
+            description (str | None): Optional description substring to search for.
+
+        Returns:
+            list[Task]: A list of tasks matching the search criteria.
+        """
+        conn = self._get_connection()
+        query = "SELECT id, user_id, title, description, due_date, status FROM tasks WHERE user_id = ?"
+        params: list = [user_id]
+
+        if title is not None:
+            query += " AND title LIKE ?"
+            params.append(f"%{title}%")
+        if description is not None:
+            query += " AND description LIKE ?"
+            params.append(f"%{description}%")
+
+        cur = conn.execute(query, tuple(params))
+        tasks: list[Task] = []
+        for row in cur.fetchall():
+            task = Task(
+                id=row["id"],
+                title=row["title"],
+                description=row["description"],
+                due_date=row["due_date"],
+                status=row["status"],
+                user_id=row["user_id"],
+            )
+            tasks.append(task)
+        return tasks

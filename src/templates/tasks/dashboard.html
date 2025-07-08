@@ -2,7 +2,37 @@
 content %}
 <div class="container mx-auto px-2 pt-16">
   <div class="flex flex-col gap-6">
+    <!-- HEADING -->
     <h1 class="mb-2 text-center text-4xl font-bold">Task Dashboard</h1>
+    <!-- SEARCH SECTION -->
+    <form id="task-search-form">
+      <h3 class="mb-4 text-center text-xl">Search</h3>
+      <div class="flex flex-col gap-4 md:flex-row">
+        <input
+          class="form-input"
+          type="text"
+          autocomplete="off"
+          name="title"
+          placeholder="Enter Title"
+        />
+        <input
+          class="form-input"
+          type="text"
+          autocomplete="off"
+          name="description"
+          placeholder="Enter Description"
+        />
+      </div>
+      <div class="mt-4 flex justify-between">
+        <button id="reset-task-search-button" class="btn-outline" type="button">
+          Reset
+        </button>
+        <button class="btn-primary" type="submit">Search</button>
+      </div>
+    </form>
+    <!-- SPACER -->
+    <div class="border-foreground/60 mt-6 mb-2 h-[1px] border"></div>
+    <!-- NEW TASK AND FILTER BAR -->
     <div class="flex justify-between">
       <a href="/task">
         <button class="btn-primary" tabindex="-1">Add new task</button>
@@ -20,10 +50,12 @@ content %}
         </select>
       </div>
     </div>
+    <!-- TASK GRID -->
     <div
       class="grid grid-cols-1 justify-items-center gap-4 md:grid-cols-2 xl:grid-cols-3"
     >
       {% for task in tasks %}
+      <!-- TASK CARD -->
       <div
         class="border-border flex w-full max-w-xl min-w-xs flex-col justify-between rounded border"
         data-task-status="{{ task.status }}"
@@ -49,10 +81,10 @@ content %}
         <!-- FOOTER -->
         <div class="flex items-center justify-between px-2 py-4">
           <a href="/task/{{ task.id }}">
-            <button class="btn-primary" tabindex="-1">Edit</button>
+            <button class="btn-outline" tabindex="-1">Edit</button>
           </a>
           <button
-            class="btn-primary"
+            class="btn-outline"
             type="button"
             data-delete-task-id="{{ task.id }}"
           >
@@ -60,8 +92,12 @@ content %}
           </button>
         </div>
       </div>
+      <!-- TASK CARD ENDS -->
       {% endfor %}
     </div>
+    <!-- TASK GRID ENDS -->
+    <!-- SPACER -->
+    <div class="border-foreground/60 mt-12 mb-2 h-[1px] border"></div>
     <div class="ml-auto">
       <a href="{{ url_for('task.export_tasks') }}">
         <button class="btn-primary">Export Tasks</button>

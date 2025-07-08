@@ -4,6 +4,7 @@ import { setupDeleteTaskHandler } from './delete-task-handler';
 import { setupEditTaskForm } from './edit-task-form';
 import { setupLoginForm } from './login-form';
 import { setupRegistrationForm } from './registration-form';
+import { setupTaskSearchForm } from './task-search-form';
 
 /**
  * Main function to initialize the client side code
@@ -16,6 +17,7 @@ async function main() {
   setupEditTaskForm();
   setupDeleteTaskHandler();
   setupDashboard();
+  setupTaskSearchForm();
 }
 
 main();
