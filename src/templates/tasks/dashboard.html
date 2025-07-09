@@ -39,7 +39,9 @@ content %}
     <div class="flex flex-row flex-wrap items-center justify-between gap-4">
       <!-- NEW TASK -->
       <a href="/task">
-        <button class="btn-primary" tabindex="-1">Add new task</button>
+        <button class="btn-primary" tabindex="-1" type="button">
+          Add new task
+        </button>
       </a>
       {% if tasks %}
       <!-- SORT -->
@@ -105,7 +107,9 @@ content %}
         <!-- FOOTER -->
         <div class="flex items-center justify-between px-2 pt-8 pb-4">
           <a href="/task/{{ task.id }}">
-            <button class="btn-outline" tabindex="-1">Edit</button>
+            <button class="btn-outline" tabindex="-1" type="button">
+              Edit
+            </button>
           </a>
           <button
             class="btn-outline"
@@ -125,7 +129,7 @@ content %}
     <div class="border-foreground/60 mt-12 mb-2 h-[1px] border"></div>
     <div class="ml-auto">
       <a href="{{ url_for('task.export_tasks') }}">
-        <button class="btn-primary">Export Tasks</button>
+        <button class="btn-primary" type="button">Export Tasks</button>
       </a>
     </div>
     {% endif %} {% if not tasks %}
