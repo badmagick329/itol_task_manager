@@ -1,11 +1,11 @@
 services:
   web:
-    image: itol_task_manager:latest
-    restart: "always"
+    image: itol_task_manager:prod
+    restart: 'always'
     env_file:
       - .env
     volumes:
-      - sqlite_data:/app/src/app.db
+      - ./db/:/app/db
     expose:
       - '${PORT}'
   caddy:
@@ -19,6 +19,3 @@ services:
       - ./src/static:/srv/:ro
     depends_on:
       - web
-
-volumes:
-  sqlite_data:
