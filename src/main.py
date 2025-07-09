@@ -25,4 +25,9 @@ if __name__ == "__main__":
     app = create_app(Config)
     use_reloader = os.environ.get("USE_RELOADER") == "1"
     debug = os.environ.get("DEBUG") == "1"
-    app.run(debug=debug, use_reloader=use_reloader)
+    app.run(
+        port=int(os.environ.get("PORT", 3000)),
+        host=os.environ.get("HOST", "0.0.0.0"),
+        debug=debug,
+        use_reloader=use_reloader,
+    )
