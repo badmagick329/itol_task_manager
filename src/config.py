@@ -3,7 +3,7 @@ class Config:
     Base configuration class containing default settings for the application.
     """
 
-    DATABASE = "app.db"
+    DATABASE = "db/app.db"
     TESTING = False
 
     @classmethod
