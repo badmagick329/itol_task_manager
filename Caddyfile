@@ -1,0 +1,12 @@
+:80 {
+  # Serve static files under /static
+  handle_path /static/* {
+    root * /srv
+    file_server
+  }
+
+  # Proxy all other requests to the Flask app
+  handle {
+    reverse_proxy web:5000
+  }
+}
