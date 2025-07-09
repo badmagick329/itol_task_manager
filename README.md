@@ -52,6 +52,8 @@ The app will be accessible on `http://<your_local_ip or localhost>:<your_chosen_
 
 ```sh
 docker-compose up -d
+# To init db or to apply any changes:
+docker-compose exec web flask int-db
 ```
 
 The app will be accessible on `http://<your_public_ip or domain>:<your_chosen_port>`
