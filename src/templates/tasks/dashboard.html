@@ -4,6 +4,7 @@ content %}
   <div class="flex flex-col gap-6">
     <!-- HEADING -->
     <h1 class="mb-2 text-center text-4xl font-bold">Task Dashboard</h1>
+    {% if tasks %}
     <!-- SEARCH SECTION -->
     <form id="task-search-form">
       <h3 class="mb-4 text-center text-xl">Search</h3>
@@ -32,12 +33,15 @@ content %}
     </form>
     <!-- SPACER -->
     <div class="border-foreground/60 mt-6 mb-2 h-[1px] border"></div>
+    <!-- SEARCH SECTION END -->
+    {% endif %}
     <!-- NEW TASK, SORT AND FILTER BAR -->
     <div class="flex flex-row flex-wrap items-center justify-between gap-4">
       <!-- NEW TASK -->
       <a href="/task">
         <button class="btn-primary" tabindex="-1">Add new task</button>
       </a>
+      {% if tasks %}
       <!-- SORT -->
       <div>
         <select id="task-sorter" class="form-input">
@@ -66,6 +70,7 @@ content %}
           </option>
         </select>
       </div>
+      {% endif %}
     </div>
     <!-- TASK GRID -->
     <div
@@ -115,6 +120,7 @@ content %}
       {% endfor %}
     </div>
     <!-- TASK GRID ENDS -->
+    {% if tasks %}
     <!-- SPACER -->
     <div class="border-foreground/60 mt-12 mb-2 h-[1px] border"></div>
     <div class="ml-auto">
@@ -122,7 +128,7 @@ content %}
         <button class="btn-primary">Export Tasks</button>
       </a>
     </div>
-    {% if not tasks %}
+    {% endif %} {% if not tasks %}
     <div class="flex w-full flex-col justify-center">
       <h1 class="text-foreground/80 text-center text-2xl">
         No tasks available. Click "Add new task" to create your first task.
