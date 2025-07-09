@@ -3,9 +3,12 @@ class Config:
     Base configuration class containing default settings for the application.
     """
 
-    SECRET_KEY = "replace-this-with-a-real-secret"
     DATABASE = "app.db"
     TESTING = False
+
+    @classmethod
+    def inject_secret(cls, secret: str):
+        cls.SECRET_KEY = secret
 
 
 class TestConfig(Config):
