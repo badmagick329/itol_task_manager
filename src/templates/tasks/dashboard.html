@@ -79,14 +79,14 @@ content %}
       {% for task in tasks %}
       <!-- TASK CARD -->
       <div
-        class="border-border flex w-full max-w-xl min-w-xs flex-col justify-between rounded border"
+        class="border-border flex w-full max-w-xl min-w-xs flex-col justify-between overflow-hidden rounded border"
         data-task-status="{{ task.status }}"
         data-task-title="{{ task.title }}"
         data-task-due-date="{{ task.due_date }}"
       >
         <div>
           <!-- HEADER -->
-          <div class="bg-background-light flex flex-col overflow-hidden">
+          <div class="bg-background-light flex flex-col">
             <span
               class="bg-background border-border mt-2 mr-2 self-end rounded-md border-[1px] px-4 text-sm font-semibold"
               >{{ task.status }}</span
