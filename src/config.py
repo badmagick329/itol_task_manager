@@ -16,5 +16,6 @@ class TestConfig(Config):
     Configuration class for testing, inherits from Config and enables testing mode with in-memory database.
     """
 
+    SECRET_KEY = "replace-this-with-a-real-secret"
     TESTING = True
     DATABASE = ":memory:"
